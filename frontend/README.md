@@ -10,5 +10,5 @@ Currently, two official plugins are available:
 
 ## Usage 
 
-1. nmp install
+1. npm install
 2. npm run dev
