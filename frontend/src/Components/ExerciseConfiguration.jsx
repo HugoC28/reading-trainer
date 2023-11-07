@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { usePatient } from "../Contexts/PatientContext";
 import styled from "styled-components";
-import TopBar from "./TopBar";
+import TopBar from "./SideBar";
 
 const Container = styled.div`
   position: absolute;
