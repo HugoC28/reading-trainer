@@ -9,13 +9,13 @@ import { RiSettingsLine } from "react-icons/ri";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 import { BiUserCircle } from "react-icons/bi";
 import { CiLogout } from "react-icons/ci";
+import { getAuth, signOut } from "firebase/auth";
+import firebaseApp from "../config/authconfig";
 
 const SidebarContainer = styled.div`
-  width: 200px;
   background-color: #ffffff;
   color: #596780;
   height: 100vh;
-  position: fixed;
 `;
 
 const TitleContainer = styled.div`
@@ -28,6 +28,7 @@ const MenuContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const IconItem = styled.div`
@@ -84,9 +85,19 @@ const LogoutButton = styled.button`
 const SideBar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth(firebaseApp);
+      await signOut(auth);
+      localStorage.removeItem("token");
+      alert("Logout successful!");
+      navigate("/login");
+    } catch (error) {
+      alert("Logout Failed!");
+
+      console.error("Error signing out:", error);
+    }
   };
 
   return (

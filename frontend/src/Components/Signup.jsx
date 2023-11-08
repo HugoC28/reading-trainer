@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseApp from "../config/authconfig";
 
 const Container = styled.div`
@@ -44,23 +44,11 @@ const Label = styled.label`
   font-family: "Acme", sans-serif;
 `;
 
-const ForgotPasswordLink = styled.a`
-  text-align: right;
-  width: 100%;
-  margin-top: 5px;
-  color: #596780;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const Button = styled.button`
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  margin-top: 50px;
+  margin-top: 73px;
   background-color: #596780;
   color: white;
   border: 1px solid black;
@@ -80,9 +68,8 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const LoginForm = () => {
+const SignUpForm = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
@@ -93,35 +80,24 @@ const LoginForm = () => {
     });
   };
 
-  const handleSignIn = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
-    console.log(email);
 
     const auth = getAuth(firebaseApp);
-    console.log(auth);
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(userCredential);
-      const user = userCredential.user;
-      const idToken = await user.getIdToken();
-      localStorage.setItem("token", idToken);
-      alert("Login successful!");
-      navigate("/");
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("Sign Up successful!");
+      navigate("/login");
     } catch (error) {
-      console.log(error);
-      alert("Login failed. Check your credentials.");
+      alert("Signing Up failed");
       console.error(error);
     }
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSignIn}>
+      <Form onSubmit={handleSignUp}>
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"
@@ -138,14 +114,13 @@ const LoginForm = () => {
           value={formData.password}
           onChange={handleChange}
         />
-        <ForgotPasswordLink href="#">Forgot your password?</ForgotPasswordLink>
-        <Button type="submit">Log in</Button>
+        <Button type="submit">Sign up</Button>
         <p style={{ color: "#9AA1A9" }}>
-          Dont have an account? <StyledLink to="/signin">Sign up</StyledLink>
+          Already have an account? <StyledLink to="/login">Log in</StyledLink>
         </p>
       </Form>
     </Container>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;

@@ -1,16 +1,18 @@
 import Sidebar from "./SideBar";
 import styled from "styled-components";
 import { usePatient } from "../Contexts/PatientContext";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
 `;
 
 const Content = styled.div`
-  margin-left: 240px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin: 20px;
 `;
 
 const Title = styled.h1`
@@ -25,8 +27,7 @@ const InfoBox = styled.div`
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
-  height: 250px;
-  width: 1120px;
+  width: 97%;
 `;
 
 const LowerContainer = styled.div`
@@ -36,31 +37,50 @@ const LowerContainer = styled.div`
 
 const LeftBox = styled.div`
   flex: 2;
+  flex-grow: 1;
+  min-height: 170px;
+  min-width: 600px;
   background-color: white;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
-  width: 600px;
-  height: 200px;
   margin-right: 40px;
 `;
 
 const RightBox = styled.div`
   flex: 1;
+  min-height: 170px;
+  min-width: 400px;
+  display: flex;
   justify-content: center;
   align-items: center;
   background-color: white;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
-  width: 440px;
-  height: 200px;
+`;
+
+const Text = styled.p`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+`;
+
+const ListText = styled.li`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+`;
+
+const StyledLink = styled(Link)`
+  color: inherit;
+  text-decoration: none;
 `;
 
 const Profile = () => {
   const { state } = usePatient();
   const { selectedPatient } = state;
-  console.log(state);
+  //console.log(state);
 
   return (
     <Container>
@@ -68,11 +88,29 @@ const Profile = () => {
 
       <Content>
         <Title>{`${selectedPatient.name}'s profile`}</Title>
-        <InfoBox></InfoBox>
+        <InfoBox>
+          <Text>Name: {selectedPatient.name}</Text>
+          <Text>Age: {selectedPatient.age}</Text>
+          <Text>Parents: {selectedPatient.parents}</Text>
+          <Text>Progress: {selectedPatient.progress}%</Text>
+          <Text>Difficulties:</Text>
+          <ul>
+            {selectedPatient.difficulties.map((difficulty, index) => (
+              <ListText key={index}>{difficulty}</ListText>
+            ))}
+          </ul>
+        </InfoBox>
         <Title>{`Latest test`}</Title>
         <LowerContainer>
           <LeftBox></LeftBox>
-          <RightBox></RightBox>
+          <StyledLink
+            to={`/patients/${selectedPatient.id}/add`}
+            key={selectedPatient.id}
+          >
+            <RightBox>
+              <Text>+ new test</Text>
+            </RightBox>
+          </StyledLink>
         </LowerContainer>
       </Content>
     </Container>
