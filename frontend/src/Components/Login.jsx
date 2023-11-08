@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import firebaseApp from "../config/authconfig";
 
 const Container = styled.div`
   display: flex;
@@ -91,20 +93,35 @@ const LoginForm = () => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSignIn = async (e) => {
+    e.preventDefault();
     const { email, password } = formData;
-    if (email === "email" && password === "password") {
-      const token = "mock_token";
+    console.log(email);
 
-      localStorage.setItem("token", token);
-
+    const auth = getAuth(firebaseApp);
+    console.log(auth);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(userCredential);
+      const user = userCredential.user;
+      const idToken = await user.getIdToken();
+      localStorage.setItem("token", idToken);
+      alert("Login successful!");
       navigate("/");
+    } catch (error) {
+      console.log(error);
+      alert("Login failed. Check your credentials.");
+      console.error(error);
     }
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSignIn}>
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"

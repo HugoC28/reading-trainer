@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import firebaseApp from "../config/authconfig";
 
 const Container = styled.div`
   display: flex;
@@ -66,7 +68,8 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const SigninForm = () => {
+const SignUpForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
@@ -77,13 +80,24 @@ const SigninForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+    const { email, password } = formData;
+
+    const auth = getAuth(firebaseApp);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("Sign Up successful!");
+      navigate("/login");
+    } catch (error) {
+      alert("Signing Up failed");
+      console.error(error);
+    }
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSignUp}>
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"
@@ -109,4 +123,4 @@ const SigninForm = () => {
   );
 };
 
-export default SigninForm;
+export default SignUpForm;

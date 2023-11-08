@@ -9,7 +9,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  margin-left: 200px;
+  flex: 1;
   background-color: #c3c3c3;
 `;
 
