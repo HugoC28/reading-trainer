@@ -12,3 +12,5 @@ Currently, two official plugins are available:
 
 1. npm install
 2. npm run dev
+3. Head to the http://localhost:5173 with browser
+4. Make own credentials or use "Tester@gmail.com" and "password"
