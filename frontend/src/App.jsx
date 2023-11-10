@@ -11,6 +11,7 @@ import Settings from "./Components/Settings";
 import Help from "./Components/Help";
 import Profile from "./Components/Profile";
 import NewTest from "./Components/NewTest";
+import ExercisePreview from "./Components/ExercisePreview";
 
 function App() {
   const navigate = useNavigate();
@@ -29,6 +30,10 @@ function App() {
           <Route path="/patients" element={<PatientSelection />} />
           <Route path="/patients/:id" element={<Profile />} />
           <Route path="/patients/:id/add" element={<NewTest />} />
+          <Route
+            path="/patients/:id/add/preview"
+            element={<ExercisePreview />}
+          />
           <Route path="/signin" element={<SigninForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/" element={<DashBoard />} />
