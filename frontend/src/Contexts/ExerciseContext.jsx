@@ -1,57 +1,42 @@
 import React, { createContext, useContext, useReducer } from "react";
 
-const initialExerciseState = {
-  topic: "",
-  difficulty: "",
-  exerciseType: "",
-  exerciseText: "",
-  exerciseImages: [],
+// Define the initial state for the exercise context
+const initialState = {
+  generatedExercise: null,
 };
 
+// Create the context
 const ExerciseContext = createContext();
 
-const SET_EXERCISE_CONFIG = "SET_EXERCISE_CONFIG";
-const GENERATE_EXERCISE = "GENERATE_EXERCISE";
+// Define action types
+const SET_GENERATED_EXERCISE = "SET_GENERATED_EXERCISE";
 
+// Define the reducer function
 const exerciseReducer = (state, action) => {
   switch (action.type) {
-    case SET_EXERCISE_CONFIG:
-      return { ...state, ...action.payload };
-    case GENERATE_EXERCISE:
-      // Implement exercise generation logic here and update exerciseText and exerciseImages
-      return {
-        ...state,
-        exerciseText: "Generated exercise text",
-        exerciseImages: ["image1.jpg", "image2.jpg"],
-      };
+    case SET_GENERATED_EXERCISE:
+      return { ...state, generatedExercise: action.payload };
     default:
       return state;
   }
 };
 
+// Create the context provider component
 export const ExerciseProvider = ({ children }) => {
-  const [exerciseState, exerciseDispatch] = useReducer(
-    exerciseReducer,
-    initialExerciseState
-  );
+  const [state, dispatch] = useReducer(exerciseReducer, initialState);
 
-  const setExerciseConfig = (config) => {
-    exerciseDispatch({ type: SET_EXERCISE_CONFIG, payload: config });
-  };
-
-  const generateExercise = () => {
-    exerciseDispatch({ type: GENERATE_EXERCISE });
+  const setGeneratedExercise = (exercise) => {
+    dispatch({ type: SET_GENERATED_EXERCISE, payload: exercise });
   };
 
   return (
-    <ExerciseContext.Provider
-      value={{ exerciseState, setExerciseConfig, generateExercise }}
-    >
+    <ExerciseContext.Provider value={{ state, setGeneratedExercise }}>
       {children}
     </ExerciseContext.Provider>
   );
 };
 
+// Custom hook for using the exercise context
 export const useExercise = () => {
   const context = useContext(ExerciseContext);
   if (!context) {
