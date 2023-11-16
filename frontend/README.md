@@ -15,6 +15,6 @@
 3. "npm run dev" starts the app. Different starting scripts can be found from package.json
 4. Head to the http://localhost:5173 with browser
 5. Make own credentials or use "Tester@gmail.com" and "password"
-6. With a successful login the bearer token is saved to the localstorage of the browser home view of the app is opened
+6. With a successful login the bearer token is saved to the localstorage and the home view of the app is opened
 
 !! Before making the app to generate exercises, be sure that backend is also up and running
