@@ -22,7 +22,7 @@ const AppContainer = styled.div`
 
 const ContentContainer = styled.div`
   flex: 1; // Takes up the remaining space
-  overflow-y: auto; // In case your content is longer than the viewport
+  overflow-y: auto; // In case content is longer than the viewport
 `;
 
 function App() {

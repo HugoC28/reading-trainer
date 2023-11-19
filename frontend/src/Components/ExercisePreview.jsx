@@ -3,7 +3,6 @@ import { useExercise } from "../Contexts/ExerciseContext";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Content = styled.div`
-  flex: 1;
   margin: 20px;
 `;
 
@@ -24,10 +23,26 @@ const TaskBox = styled.div`
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
 `;
 
+const Item = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
+
 const Text = styled.p`
   font-family: "Acme", sans-serif;
-  font-size: 1em;
+  font-size: 1.5em;
   font-weight: 400;
+`;
+
+const Image = styled.img`
+  width: 400px;
+  height: 400px;
+  margin: 20px;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
 `;
 
 const ExercisePreview = () => {
@@ -38,13 +53,21 @@ const ExercisePreview = () => {
     <Content>
       <Title>{`Tests's preview`}</Title>
       <TaskBox>
+        <Text>Generated Exercise:</Text>
+
         {generatedExercise ? (
           // Display content when generatedExercise is not null
-          // You can render your actual content here
-          <div>
-            <Text>Generated Exercise:</Text>
-            <Text>{generatedExercise}</Text>
-          </div>
+          <>
+            {Object.entries(generatedExercise).map(
+              ([key, { sentences, url }]) => (
+                <Item key={key}>
+                  <Image src={url} alt={`story img`} />
+
+                  <Text>{sentences}</Text>
+                </Item>
+              )
+            )}
+          </>
         ) : (
           // Display loading icon when generatedExercise is null
           <CircularProgress />

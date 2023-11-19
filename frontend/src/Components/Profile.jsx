@@ -2,8 +2,7 @@ import styled from "styled-components";
 import { usePatient } from "../Contexts/PatientContext";
 import { Link } from "react-router-dom";
 
-const Content = styled.div`
-  flex: 1;
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -78,7 +77,7 @@ const Profile = () => {
   //console.log(state);
 
   return (
-    <Content>
+    <Container>
       <Title>{`${selectedPatient.name}'s profile`}</Title>
       <InfoBox>
         <Text>Name: {selectedPatient.name}</Text>
@@ -104,7 +103,7 @@ const Profile = () => {
           </RightBox>
         </StyledLink>
       </LowerContainer>
-    </Content>
+    </Container>
   );
 };
 
