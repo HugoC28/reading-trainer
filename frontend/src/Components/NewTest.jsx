@@ -1,20 +1,13 @@
-import Sidebar from "./SideBar";
 import styled from "styled-components";
 import { usePatient } from "../Contexts/PatientContext";
 import { useExercise } from "../Contexts/ExerciseContext";
-
 import { useState } from "react";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
 import responseService from "../services/responseService";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
-  display: flex;
-`;
-
-const Content = styled.div`
-  flex: 1;
   margin: 20px;
 `;
 
@@ -25,30 +18,55 @@ const Title = styled.h1`
   margin-top: 40px;
 `;
 
+const Text = styled.p`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0;
+`;
+
 const TaskBox = styled.div`
   background-color: white;
   border-radius: 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
 `;
 
-const Textarea = styled.textarea`
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
-  font-family: "Acme", sans-serif;
-  color: #d9d9d9;
-  height: 300px;
-  width: 100%;
-`;
-
-const SliderContainer = styled.div`
+const Upper = styled.div`
   display: flex;
   justify-content: space-around;
-  padding: 0 20px;
-  margin: 0 5px;
+`;
+
+const Lower = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
+
+const UpperBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const SelectionLabel = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #d9d9d9;
+  padding: 10px;
+  margin: 3px;
+  width: 250px;
+
+  border: 2px solid
+    ${({ isSelected }) => (isSelected ? "black" : "transparent")};
+
+  border-radius: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: #596780;
+  }
 `;
 
 const SliderWrapper = styled.div`
@@ -57,31 +75,34 @@ const SliderWrapper = styled.div`
   align-items: flex-start;
   background-color: white;
   padding: 10px;
-  min-width: 200px;
-`;
-
-const StyledLink = styled(Link)`
-  color: inherit;
-  text-decoration: none;
-`;
-
-const Text = styled.p`
-  font-family: "Acme", sans-serif;
-  font-size: 1em;
-  font-weight: 400;
+  margin-top: 20px;
+  width: 250px;
 `;
 
 const LinkContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 200px;
+  width: 200px;
+  height: 50px;
   background-color: #d9d9d9;
   border-radius: 25px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
+  cursor: pointer;
+  &:hover {
+    background-color: #596780;
+  }
 `;
+const topics = ["Rabbits", "Bears", "Dinosaurs"];
+const exerciseTypes = [
+  "Vocabulary Building",
+  "Reading comprehension strategies",
+  "Storytelling and Narrative Activities",
+];
 
 const NewTest = () => {
+  const navigate = useNavigate();
+
   // Global state for the patient context
   const { state: patientState } = usePatient();
   const { selectedPatient } = patientState;
@@ -89,93 +110,138 @@ const NewTest = () => {
   // Global state for the exercise context
   const { state: exerciseState, setGeneratedExercise } = useExercise();
 
-  const [textAreaContent, setTextAreaContent] = useState("");
   const [difficulty, setDifficulty] = useState(5);
   const [exerciseNumber, setExerciseNumber] = useState(5);
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedExerciseType, setSelectedExerciseType] = useState(null);
 
-  const handleDifficultyChange = (_, newValue) => {
+  const selectDifficulty = (_, newValue) => {
     setDifficulty(newValue);
   };
 
-  const handleExerciseNumberChange = (_, newValue) => {
+  const selectNumber = (_, newValue) => {
     setExerciseNumber(newValue);
   };
 
-  const handleTextAreaChange = (event) => {
-    setTextAreaContent(event.target.value);
+  // Handler functions
+  const selectTopic = (topic) => {
+    setSelectedTopic(topic);
+  };
+
+  const selectExerciseType = (type) => {
+    setSelectedExerciseType(type);
   };
 
   const handleGenerateExercise = async () => {
+    if (!selectedTopic || !selectedExerciseType) {
+      alert("Please select topic and exercise type");
+      return;
+    }
+    setGeneratedExercise(null);
+    navigate(`/patients/${selectedPatient.id}/add/preview`);
+
     try {
-      const response = await responseService.getExercise(
-        textAreaContent.split(",").map((item) => item.trim())
-      );
+      // Call the service to generate the exercise
+      const response = await responseService.getExercise({
+        difficulty: difficulty,
+        exerciseNumber: exerciseNumber,
+        selectedTopic: selectedTopic,
+        selectedExerciseType: selectedExerciseType,
+      });
 
       setGeneratedExercise(response);
-
-      console.log("Exercise generated:", response);
     } catch (error) {
-      // Handle the error
       console.error("Error generating exercise:", error);
-    } finally {
-      setTextAreaContent("");
     }
   };
   return (
     <Container>
-      <Sidebar />
-      <Content>
-        <Title>{`${selectedPatient.name}'s test`}</Title>
-        <TaskBox>
-          <Textarea
-            placeholder="Write your words here like topic, text type, exercise object"
-            value={textAreaContent}
-            onChange={handleTextAreaChange}
-          ></Textarea>
-
-          <SliderContainer>
-            <SliderWrapper>
-              <Typography id="difficulty-slider" gutterBottom>
-                Difficulty:
-              </Typography>
-              <Slider
-                value={difficulty}
-                onChange={handleDifficultyChange}
-                valueLabelDisplay="auto"
-                aria-labelledby="difficulty-slider"
-                min={1}
-                max={10}
-                valueLabelFormat={(value) => `${value}`}
-              />
-            </SliderWrapper>
-
+      <Title>{`${selectedPatient.name}'s test`}</Title>
+      <TaskBox>
+        <Upper>
+          <UpperBox>
+            <Title>Type of exercise</Title>
+            {exerciseTypes.map((type, index) => (
+              <SelectionLabel
+                key={index}
+                isSelected={selectedExerciseType === type}
+                onClick={() => selectExerciseType(type)}
+              >
+                <Text>{type} </Text>
+              </SelectionLabel>
+            ))}
             <SliderWrapper>
               <Typography id="exercise-number-slider" gutterBottom>
-                Exercise Number:
+                <Text>Number:</Text>
               </Typography>
               <Slider
                 value={exerciseNumber}
-                onChange={handleExerciseNumberChange}
+                onChange={selectNumber}
                 valueLabelDisplay="auto"
                 aria-labelledby="exercise-number-slider"
                 min={1}
                 max={10}
                 valueLabelFormat={(value) => `${value}`}
+                sx={{
+                  // Style the imported component
+                  "& .MuiSlider-thumb": {
+                    color: "#596780",
+                  },
+                  "& .MuiSlider-track": {
+                    color: "#596780",
+                  },
+                  "& .MuiSlider-rail": {
+                    color: "#d9d9d9",
+                  },
+                }}
               />
             </SliderWrapper>
-          </SliderContainer>
-
-          <StyledLink
-            to={`/patients/${selectedPatient.id}/add/preview`}
-            key={selectedPatient.id}
-            onClick={handleGenerateExercise}
-          >
-            <LinkContainer>
-              <Text>generate</Text>
-            </LinkContainer>
-          </StyledLink>
-        </TaskBox>
-      </Content>
+          </UpperBox>
+          <UpperBox>
+            <Title>Topic</Title>
+            {topics.map((topic, index) => (
+              <SelectionLabel
+                key={index}
+                isSelected={selectedTopic === topic}
+                onClick={() => selectTopic(topic)}
+              >
+                <Text>{topic} </Text>
+              </SelectionLabel>
+            ))}
+            <SliderWrapper>
+              <Typography id="difficulty-slider" gutterBottom>
+                <Text>Difficulty:</Text>
+              </Typography>
+              <Slider
+                value={difficulty}
+                onChange={selectDifficulty}
+                valueLabelDisplay="auto"
+                aria-labelledby="difficulty-slider"
+                min={1}
+                max={10}
+                valueLabelFormat={(value) => `${value}`}
+                sx={{
+                  // Style the imported component
+                  "& .MuiSlider-thumb": {
+                    color: "#596780",
+                  },
+                  "& .MuiSlider-track": {
+                    color: "#596780",
+                  },
+                  "& .MuiSlider-rail": {
+                    color: "#d9d9d9",
+                  },
+                }}
+              />
+            </SliderWrapper>
+          </UpperBox>
+        </Upper>
+        <Lower>
+          <LinkContainer onClick={handleGenerateExercise}>
+            <Text>generate</Text>
+          </LinkContainer>
+        </Lower>
+      </TaskBox>
     </Container>
   );
 };

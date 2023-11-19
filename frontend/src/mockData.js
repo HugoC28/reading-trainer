@@ -144,4 +144,52 @@ export const profiles = [
       "Trouble with Summarization",
     ],
   },
+  {
+    name: "Tiffany",
+    age: "9",
+    parents: "Mr. and Mrs. Johnson",
+    progress: "100",
+    id: "cd747c0e-7d5c-11ee-b962-0242ac120002",
+    difficulties: [
+      "Difficulty Making Inferences",
+      "Poor Recall",
+      "Trouble with Summarization",
+    ],
+  },
+  {
+    name: "Tiffany",
+    age: "9",
+    parents: "Mr. and Mrs. Johnson",
+    progress: "100",
+    id: "cd747c0e-7d5c-11ee-b962-0242ac120002",
+    difficulties: [
+      "Difficulty Making Inferences",
+      "Poor Recall",
+      "Trouble with Summarization",
+    ],
+  },
+  {
+    name: "Tiffany",
+    age: "9",
+    parents: "Mr. and Mrs. Johnson",
+    progress: "100",
+    id: "cd747c0e-7d5c-11ee-b962-0242ac120002",
+    difficulties: [
+      "Difficulty Making Inferences",
+      "Poor Recall",
+      "Trouble with Summarization",
+    ],
+  },
+  {
+    name: "Tiffany",
+    age: "9",
+    parents: "Mr. and Mrs. Johnson",
+    progress: "100",
+    id: "cd747c0e-7d5c-11ee-b962-0242ac120002",
+    difficulties: [
+      "Difficulty Making Inferences",
+      "Poor Recall",
+      "Trouble with Summarization",
+    ],
+  },
 ];

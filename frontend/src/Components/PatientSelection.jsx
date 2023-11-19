@@ -1,17 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { usePatient } from "../Contexts/PatientContext";
-import Sidebar from "./SideBar";
 import { profiles } from "../mockData";
-
-const Container = styled.div`
-  display: flex;
-`;
-
-const Content = styled.div`
-  flex: 1;
-  background-color: #c3c3c3;
-`;
 
 const BoxesContainer = styled.div`
   display: flex;
@@ -19,6 +9,7 @@ const BoxesContainer = styled.div`
   flex-direction: row;
   justify-content: space-evenly;
   align-items: flex-start;
+  background-color: #c3c3c3;
 `;
 
 const StyledLink = styled(Link)`
@@ -55,20 +46,15 @@ const PatientSelection = () => {
   const { setSelectedPatient } = usePatient();
 
   return (
-    <Container>
-      <Sidebar />
-      <Content>
-        <BoxesContainer>
-          {profiles.map((profile) => (
-            <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
-              <Box onClick={() => setSelectedPatient(profile)}>
-                <Name>{profile.name}</Name>
-              </Box>
-            </StyledLink>
-          ))}
-        </BoxesContainer>
-      </Content>
-    </Container>
+    <BoxesContainer>
+      {profiles.map((profile) => (
+        <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
+          <Box onClick={() => setSelectedPatient(profile)}>
+            <Name>{profile.name}</Name>
+          </Box>
+        </StyledLink>
+      ))}
+    </BoxesContainer>
   );
 };
 

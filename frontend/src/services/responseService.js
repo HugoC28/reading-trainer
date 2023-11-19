@@ -4,12 +4,10 @@ const BASE_URL = "http://localhost:3000";
 
 const responseService = {
   dummy: async () => await axios.get(`${BASE_URL}/`),
-  getExercise: async (dataArray) => {
+  getExercise: async (conf) => {
+    console.log("conf", conf);
     try {
-      const response = await axios.post(
-        `${BASE_URL}/generate-exercise`,
-        dataArray
-      );
+      const response = await axios.post(`${BASE_URL}/generate-exercise`, conf);
       return response.data;
     } catch (error) {
       console.error("Error getting exercise:", error);

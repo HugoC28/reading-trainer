@@ -5,11 +5,14 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseApp from "../config/authconfig";
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  background-color: #ffcf53;
+  overflow: hidden;
 `;
 
 const Form = styled.form`
@@ -19,10 +22,9 @@ const Form = styled.form`
   padding-left: 30px;
   padding-right: 30px;
   padding-top: 20px;
-
-  border: 2px solid #a5a5a5;
+  border: 1px solid #e5e1e1;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   background-color: white;
 `;
 
@@ -31,6 +33,8 @@ const Input = styled.input`
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #e5e1e1;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+
   border-radius: 25px;
   font-family: "Acme", sans-serif;
   color: #bcbcbc;
@@ -49,14 +53,15 @@ const Button = styled.button`
   padding: 10px;
   margin: 10px 0;
   margin-top: 73px;
-  background-color: #596780;
+  background-color: #ff9e58;
   color: white;
-  border: 1px solid black;
+  border: none;
   border-radius: 25px;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 
   &:hover {
-    background-color: #9099a8;
+    background-color: #ffcf53;
   }
 `;
 
@@ -66,6 +71,15 @@ const StyledLink = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const Image = styled.img`
+  width: ${(props) => props.width || "100px"};
+  height: ${(props) => props.height || "100px"};
+  transform: rotate(${(props) => props.rotate || "0"}deg);
+  position: absolute;
+  bottom: ${(props) => props.bottom || "auto"};
+  left: ${(props) => props.left || "auto"};
 `;
 
 const SignUpForm = () => {
@@ -119,6 +133,59 @@ const SignUpForm = () => {
           Already have an account? <StyledLink to="/login">Log in</StyledLink>
         </p>
       </Form>
+
+      <Image
+        src="../../images/Frog  3D Illustration 1.png"
+        alt="Frog"
+        rotate={20}
+        width="450px"
+        height="450px"
+        left="-100px"
+        bottom="-130px"
+      />
+      <Image
+        src="../../images/Bird  3D Illustration 1.png"
+        alt="Bird"
+        width="350px"
+        height="350px"
+        left="130px"
+        bottom="-100px"
+      />
+      <Image
+        src="../../images/Rabbit  3D Illustration 1.png"
+        alt="Rabbit"
+        width="300px"
+        height="300px"
+        left="350px"
+        bottom="-90px"
+      />
+      <Image
+        src="../../images/Bird  3D Illustration 2.png"
+        alt="Bird2"
+        width="300px"
+        height="300px"
+        left="570px"
+        bottom="-90px"
+      />
+
+      <Image
+        src="../../images/Fox  3D Illustration 1.png"
+        alt="Fox"
+        width="350px"
+        height="350px"
+        left="800px"
+        bottom="-90px"
+      />
+
+      <Image
+        src="../../images/Bear  3D Illustration 1.png"
+        alt="Bear"
+        rotate={-20}
+        width="450px"
+        height="450px"
+        left="1050px"
+        bottom="-105px"
+      />
     </Container>
   );
 };
