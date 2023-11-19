@@ -1,4 +1,3 @@
-import Sidebar from "./SideBar";
 import styled from "styled-components";
 import { usePatient } from "../Contexts/PatientContext";
 import { useExercise } from "../Contexts/ExerciseContext";
@@ -8,10 +7,6 @@ import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
 import responseService from "../services/responseService";
 import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: flex;
-`;
 
 const Content = styled.div`
   flex: 1;
@@ -122,61 +117,58 @@ const NewTest = () => {
     }
   };
   return (
-    <Container>
-      <Sidebar />
-      <Content>
-        <Title>{`${selectedPatient.name}'s test`}</Title>
-        <TaskBox>
-          <Textarea
-            placeholder="Write your words here like topic, text type, exercise object"
-            value={textAreaContent}
-            onChange={handleTextAreaChange}
-          ></Textarea>
+    <Content>
+      <Title>{`${selectedPatient.name}'s test`}</Title>
+      <TaskBox>
+        <Textarea
+          placeholder="Write your words here like topic, text type, exercise object"
+          value={textAreaContent}
+          onChange={handleTextAreaChange}
+        ></Textarea>
 
-          <SliderContainer>
-            <SliderWrapper>
-              <Typography id="difficulty-slider" gutterBottom>
-                Difficulty:
-              </Typography>
-              <Slider
-                value={difficulty}
-                onChange={handleDifficultyChange}
-                valueLabelDisplay="auto"
-                aria-labelledby="difficulty-slider"
-                min={1}
-                max={10}
-                valueLabelFormat={(value) => `${value}`}
-              />
-            </SliderWrapper>
+        <SliderContainer>
+          <SliderWrapper>
+            <Typography id="difficulty-slider" gutterBottom>
+              Difficulty:
+            </Typography>
+            <Slider
+              value={difficulty}
+              onChange={handleDifficultyChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="difficulty-slider"
+              min={1}
+              max={10}
+              valueLabelFormat={(value) => `${value}`}
+            />
+          </SliderWrapper>
 
-            <SliderWrapper>
-              <Typography id="exercise-number-slider" gutterBottom>
-                Exercise Number:
-              </Typography>
-              <Slider
-                value={exerciseNumber}
-                onChange={handleExerciseNumberChange}
-                valueLabelDisplay="auto"
-                aria-labelledby="exercise-number-slider"
-                min={1}
-                max={10}
-                valueLabelFormat={(value) => `${value}`}
-              />
-            </SliderWrapper>
-          </SliderContainer>
+          <SliderWrapper>
+            <Typography id="exercise-number-slider" gutterBottom>
+              Exercise Number:
+            </Typography>
+            <Slider
+              value={exerciseNumber}
+              onChange={handleExerciseNumberChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="exercise-number-slider"
+              min={1}
+              max={10}
+              valueLabelFormat={(value) => `${value}`}
+            />
+          </SliderWrapper>
+        </SliderContainer>
 
-          <StyledLink
-            to={`/patients/${selectedPatient.id}/add/preview`}
-            key={selectedPatient.id}
-            onClick={handleGenerateExercise}
-          >
-            <LinkContainer>
-              <Text>generate</Text>
-            </LinkContainer>
-          </StyledLink>
-        </TaskBox>
-      </Content>
-    </Container>
+        <StyledLink
+          to={`/patients/${selectedPatient.id}/add/preview`}
+          key={selectedPatient.id}
+          onClick={handleGenerateExercise}
+        >
+          <LinkContainer>
+            <Text>generate</Text>
+          </LinkContainer>
+        </StyledLink>
+      </TaskBox>
+    </Content>
   );
 };
 

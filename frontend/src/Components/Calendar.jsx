@@ -1,22 +1,17 @@
-import Sidebar from "./SideBar";
 import styled from "styled-components";
-
-const Container = styled.div`
-  display: flex;
-`;
-
 const Content = styled.div`
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
 `;
 
 const Calendar = () => {
   return (
-    <Container>
-      <Sidebar />
-      <Content>
-        <p>Calendar to be done later</p>
-      </Content>
-    </Container>
+    <Content>
+      <p>Calendar to be done later</p>
+    </Content>
   );
 };
 

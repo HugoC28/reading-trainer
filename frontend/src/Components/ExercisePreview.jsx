@@ -1,11 +1,6 @@
-import Sidebar from "./SideBar";
 import styled from "styled-components";
 import { useExercise } from "../Contexts/ExerciseContext";
 import CircularProgress from "@mui/material/CircularProgress";
-
-const Container = styled.div`
-  display: flex;
-`;
 
 const Content = styled.div`
   flex: 1;
@@ -40,25 +35,22 @@ const ExercisePreview = () => {
   const { generatedExercise } = exerciseState;
 
   return (
-    <Container>
-      <Sidebar />
-      <Content>
-        <Title>{`Tests's preview`}</Title>
-        <TaskBox>
-          {generatedExercise ? (
-            // Display content when generatedExercise is not null
-            // You can render your actual content here
-            <div>
-              <Text>Generated Exercise:</Text>
-              <Text>{generatedExercise}</Text>
-            </div>
-          ) : (
-            // Display loading icon when generatedExercise is null
-            <CircularProgress />
-          )}
-        </TaskBox>
-      </Content>
-    </Container>
+    <Content>
+      <Title>{`Tests's preview`}</Title>
+      <TaskBox>
+        {generatedExercise ? (
+          // Display content when generatedExercise is not null
+          // You can render your actual content here
+          <div>
+            <Text>Generated Exercise:</Text>
+            <Text>{generatedExercise}</Text>
+          </div>
+        ) : (
+          // Display loading icon when generatedExercise is null
+          <CircularProgress />
+        )}
+      </TaskBox>
+    </Content>
   );
 };
 

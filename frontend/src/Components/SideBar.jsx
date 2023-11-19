@@ -14,7 +14,7 @@ import firebaseApp from "../config/authconfig";
 const SidebarContainer = styled.div`
   background-color: #ffffff;
   color: #596780;
-  height: 100vh;
+  width: 200px;
 `;
 
 const TitleContainer = styled.div`

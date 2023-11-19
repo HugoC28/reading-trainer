@@ -1,11 +1,6 @@
-import Sidebar from "./SideBar";
 import styled from "styled-components";
 import { usePatient } from "../Contexts/PatientContext";
 import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: flex;
-`;
 
 const Content = styled.div`
   flex: 1;
@@ -83,37 +78,33 @@ const Profile = () => {
   //console.log(state);
 
   return (
-    <Container>
-      <Sidebar />
-
-      <Content>
-        <Title>{`${selectedPatient.name}'s profile`}</Title>
-        <InfoBox>
-          <Text>Name: {selectedPatient.name}</Text>
-          <Text>Age: {selectedPatient.age}</Text>
-          <Text>Parents: {selectedPatient.parents}</Text>
-          <Text>Progress: {selectedPatient.progress}%</Text>
-          <Text>Difficulties:</Text>
-          <ul>
-            {selectedPatient.difficulties.map((difficulty, index) => (
-              <ListText key={index}>{difficulty}</ListText>
-            ))}
-          </ul>
-        </InfoBox>
-        <Title>{`Latest test`}</Title>
-        <LowerContainer>
-          <LeftBox></LeftBox>
-          <StyledLink
-            to={`/patients/${selectedPatient.id}/add`}
-            key={selectedPatient.id}
-          >
-            <RightBox>
-              <Text>+ new test</Text>
-            </RightBox>
-          </StyledLink>
-        </LowerContainer>
-      </Content>
-    </Container>
+    <Content>
+      <Title>{`${selectedPatient.name}'s profile`}</Title>
+      <InfoBox>
+        <Text>Name: {selectedPatient.name}</Text>
+        <Text>Age: {selectedPatient.age}</Text>
+        <Text>Parents: {selectedPatient.parents}</Text>
+        <Text>Progress: {selectedPatient.progress}%</Text>
+        <Text>Difficulties:</Text>
+        <ul>
+          {selectedPatient.difficulties.map((difficulty, index) => (
+            <ListText key={index}>{difficulty}</ListText>
+          ))}
+        </ul>
+      </InfoBox>
+      <Title>{`Latest test`}</Title>
+      <LowerContainer>
+        <LeftBox></LeftBox>
+        <StyledLink
+          to={`/patients/${selectedPatient.id}/add`}
+          key={selectedPatient.id}
+        >
+          <RightBox>
+            <Text>+ new test</Text>
+          </RightBox>
+        </StyledLink>
+      </LowerContainer>
+    </Content>
   );
 };
 
