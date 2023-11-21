@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import os
 import requests
 from dotenv import load_dotenv
-#from openAIController import generate_exercise
+from controllers.openAIController import generate_exercise
 load_dotenv()
 
 

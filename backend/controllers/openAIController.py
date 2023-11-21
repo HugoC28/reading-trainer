@@ -6,19 +6,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def extract_prompts_and_sentences(text):
-    parts = text.split('PROMPT: ')
-    result = {}
-    for index, part in enumerate(parts):
-      if part.strip() == '':
-        continue
-      prompt_match = re.search(r'"([^"]+)"', part)
-      if not prompt_match:
-        continue
-      prompt = prompt_match.group(1)
-      sentences_match = part[prompt_match.end():].split('PROMPT: ')[0]
-      sentences = sentences_match.strip().replace('\n', ' ')
-      result[index] = {'prompt': prompt, 'sentences': sentences}
-    return result
+  parts = text.split('PROMPT: ')
+  result = {}
+  for index, part in enumerate(parts):
+    if part.strip() == '':
+      continue
+    prompt_match = re.search(r'"([^"]+)"', part)
+    if not prompt_match:
+      continue
+    prompt = prompt_match.group(1)
+    sentences_match = part[prompt_match.end():].split('PROMPT: ')[0]
+    sentences = sentences_match.strip().replace('\n', ' ')
+    result[index] = {'prompt': prompt, 'sentences': sentences}
+  return result
 
 def generate_exercise(req):
   base_url = os.environ['AZURE_OPENAI_BASE_URL']
