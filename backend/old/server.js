@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/generate-exercise", (req, res) => {
-  generateExercise(req, res);
+  generateExercise(req, re);
 });
 
 app.listen(port, () => {
