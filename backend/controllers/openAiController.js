@@ -52,7 +52,7 @@ export default async function generateExercise(req, res) {
     The sentences should be simple, with clear and consistent structure. 
     Ensure that the text is cohesive and forms an engaging narrative about ${selectedTopic}, including aspects of their appearance, behavior, and environment. 
     The story should be no longer than 200 words. 
-    Also give some three DALLE prompts during the story that describes the text before it. Be consistent with the prompts and always describe the characters in the same way. Use Seed 42 for every single image.
+    Also give 3 DALLE prompts during the story that describes the text after it. Be consistent with the prompts and always describe the characters in the same way. Use Seed 42 for every single image.
     Always give the DALLE prompts with PROMPT:"<prompt>" and after each prompt give the story part that describes the prompt.`;
   messages.push({ role: "user", content: prompt });
 
