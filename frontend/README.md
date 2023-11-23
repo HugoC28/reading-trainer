@@ -18,3 +18,7 @@
 6. With a successful login the bearer token is saved to the localstorage and the home view of the app is opened
 
 !! Before making the app to generate exercises, be sure that backend is also up and running
+
+## Useful links:
+- [Firebase authentication docs](https://firebase.google.com/docs/auth/web/start)
+- [Firebase realtime database docs](https://firebase.google.com/docs/database/web/start)
