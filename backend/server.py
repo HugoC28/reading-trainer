@@ -12,7 +12,8 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def home():
-  return "Hello World! "
+  return "Hello World!"
+
 
 @app.route('/generate-exercise', methods=['POST'])
 def generate_exercise_route():
