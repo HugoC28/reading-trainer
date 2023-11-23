@@ -2,10 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { setShowToast } from "../reducers/toastSlice";
-import { useDispatch, useSelector } from "react-redux";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   position: relative;
@@ -88,16 +85,7 @@ const Image = styled.img`
 const SignUpForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const dispatch = useDispatch();
-  const showToast = useSelector((state) => state.toast.showToast);
-
-  const notify = (message) => {
-    if (showToast) return;
-    toast(message, {
-      onOpen: () => dispatch(setShowToast(true)),
-      onClose: () => dispatch(setShowToast(false)),
-    });
-  };
+  const { notify } = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
