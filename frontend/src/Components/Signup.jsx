@@ -1,8 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../config/authconfig";
+import authService from "../services/authService";
 
 const Container = styled.div`
   position: relative;
@@ -98,14 +97,8 @@ const SignUpForm = () => {
     e.preventDefault();
     const { email, password } = formData;
 
-    const auth = getAuth(firebaseApp);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Sign Up successful!");
+    if (await authService.isValidSignup(email, password)) {
       navigate("/login");
-    } catch (error) {
-      alert("Signing Up failed");
-      console.error(error);
     }
   };
 

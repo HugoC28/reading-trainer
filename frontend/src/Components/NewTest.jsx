@@ -4,7 +4,7 @@ import { useExercise } from "../Contexts/ExerciseContext";
 import { useState } from "react";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
-import responseService from "../services/responseService";
+import openAIService from "../services/openAIService";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -142,7 +142,7 @@ const NewTest = () => {
 
     try {
       // Call the service to generate the exercise
-      const response = await responseService.getExercise({
+      const response = await openAIService.getExercise({
         difficulty: difficulty,
         exerciseNumber: exerciseNumber,
         selectedTopic: selectedTopic,

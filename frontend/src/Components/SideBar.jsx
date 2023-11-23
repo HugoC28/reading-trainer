@@ -8,8 +8,7 @@ import { RiSettingsLine } from "react-icons/ri";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 import { BiUserCircle } from "react-icons/bi";
 import { CiLogout } from "react-icons/ci";
-import { getAuth, signOut } from "firebase/auth";
-import firebaseApp from "../config/authconfig";
+import authService from "../services/authService";
 
 const SidebarContainer = styled.div`
   background-color: #ffffff;
@@ -86,16 +85,8 @@ const SideBar = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    try {
-      const auth = getAuth(firebaseApp);
-      await signOut(auth);
-      localStorage.removeItem("token");
-      alert("Logout successful!");
+    if (await authService.isValidLogout()) {
       navigate("/login");
-    } catch (error) {
-      alert("Logout Failed!");
-
-      console.error("Error signing out:", error);
     }
   };
 
