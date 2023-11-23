@@ -1,5 +1,4 @@
 import styled from "styled-components";
-//import { useExercise } from "../Contexts/ExerciseContext";
 import { useExercise } from "../hooks/useExercise";
 import CircularProgress from "@mui/material/CircularProgress";
 

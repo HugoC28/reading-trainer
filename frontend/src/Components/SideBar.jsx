@@ -9,6 +9,10 @@ import { IoIosHelpCircleOutline } from "react-icons/io";
 import { BiUserCircle } from "react-icons/bi";
 import { CiLogout } from "react-icons/ci";
 import authService from "../services/authService";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { setShowToast } from "../reducers/toastSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SidebarContainer = styled.div`
   background-color: #ffffff;
@@ -82,13 +86,26 @@ const LogoutButton = styled.button`
 
 const SideBar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const showToast = useSelector((state) => state.toast.showToast);
+
+  const notify = (message) => {
+    if (showToast) return;
+    toast(message, {
+      onOpen: () => dispatch(setShowToast(true)),
+      onClose: () => dispatch(setShowToast(false)),
+    });
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
     const response = await authService.isValidLogout();
 
     if (response.success) {
+      notify(`Successfully logged out.`);
       navigate("/login");
+    } else {
+      notify(`There is a problem with logout: ${response.errorMessage}`);
     }
   };
 

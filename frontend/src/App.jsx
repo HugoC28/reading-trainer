@@ -12,6 +12,8 @@ import NewTest from "./Components/NewTest";
 import ExercisePreview from "./Components/ExercisePreview";
 import SideBar from "./Components/SideBar";
 import styled from "styled-components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppContainer = styled.div`
   display: flex;
@@ -37,6 +39,13 @@ function App() {
     <AppContainer>
       {token && <SideBar />}
       <ContentContainer>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeButton={false}
+          limit={1}
+        />
         <Routes>
           <Route path="/patients" element={<PatientSelection />} />
           <Route path="/patients/:id" element={<Profile />} />

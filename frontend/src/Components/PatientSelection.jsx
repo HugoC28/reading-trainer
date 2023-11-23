@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-//import { usePatient } from "../Contexts/PatientContext";
 import { usePatient } from "../hooks/usePatient";
 import { profiles } from "../mockData";
 

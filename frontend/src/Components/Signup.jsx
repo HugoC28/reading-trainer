@@ -2,8 +2,10 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setShowToast } from "../reducers/toastSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Container = styled.div`
   position: relative;
@@ -86,13 +88,14 @@ const Image = styled.img`
 const SignUpForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showToast, setShowToast] = useState(false);
+  const dispatch = useDispatch();
+  const showToast = useSelector((state) => state.toast.showToast);
 
   const notify = (message) => {
     if (showToast) return;
     toast(message, {
-      onOpen: () => setShowToast(true),
-      onClose: () => setShowToast(false),
+      onOpen: () => dispatch(setShowToast(true)),
+      onClose: () => dispatch(setShowToast(false)),
     });
   };
 
@@ -119,19 +122,6 @@ const SignUpForm = () => {
 
   return (
     <Container>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        closeButton={false}
-        limit={1}
-        style={{
-          position: "absolute",
-          top: "0",
-          left: "50%",
-          backgroundColor: "#ffcf53",
-        }}
-      />
       <Form onSubmit={handleSignUp}>
         <Label htmlFor="email">Email</Label>
         <Input

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-//import { usePatient } from "../Contexts/PatientContext";
 import { usePatient } from "../hooks/usePatient";
 import { Link } from "react-router-dom";
 

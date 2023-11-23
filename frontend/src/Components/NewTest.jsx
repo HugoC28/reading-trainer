@@ -1,7 +1,5 @@
 import styled from "styled-components";
-//import { usePatient } from "../Contexts/PatientContext";
 import { usePatient } from "../hooks/usePatient";
-//import { useExercise } from "../Contexts/ExerciseContext";
 import { useExercise } from "../hooks/useExercise";
 import { useState } from "react";
 import Slider from "@mui/material/Slider";
