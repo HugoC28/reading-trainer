@@ -19,3 +19,6 @@
 3. Start the app with "pymon server.py" or "python server.py"
 4. Head to http://localhost:PORT with browser. The PORT is the one defined on the .env file or http://localhost:3000 if there is not spesific PORT definded.
 5. The get request to the http://localhost:PORT should just return "Hello World" on the page. Now the backend is up and running
+
+## Useful links
+- [Azure OpenAI examples with python](https://learn.microsoft.com/en-gb/azure/ai-services/openai/chatgpt-quickstart?tabs=command-line%2Cpython&pivots=programming-language-python)
