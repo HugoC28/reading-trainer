@@ -85,7 +85,9 @@ const SideBar = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    if (await authService.isValidLogout()) {
+    const response = await authService.isValidLogout();
+
+    if (response.success) {
       navigate("/login");
     }
   };

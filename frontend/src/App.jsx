@@ -1,7 +1,5 @@
 import PatientSelection from "./Components/PatientSelection";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { PatientProvider } from "./Contexts/PatientContext";
-import { ExerciseProvider } from "./Contexts/ExerciseContext";
 import LoginForm from "./Components/Login";
 import SigninForm from "./Components/Signup";
 import { useEffect } from "react";
@@ -36,30 +34,26 @@ function App() {
   }, [navigate, token]);
 
   return (
-    <PatientProvider>
-      <ExerciseProvider>
-        <AppContainer>
-          {token && <SideBar />}
-          <ContentContainer>
-            <Routes>
-              <Route path="/patients" element={<PatientSelection />} />
-              <Route path="/patients/:id" element={<Profile />} />
-              <Route path="/patients/:id/add" element={<NewTest />} />
-              <Route
-                path="/patients/:id/add/preview"
-                element={<ExercisePreview />}
-              />
-              <Route path="/signin" element={<SigninForm />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/" element={<DashBoard />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </ContentContainer>
-        </AppContainer>
-      </ExerciseProvider>
-    </PatientProvider>
+    <AppContainer>
+      {token && <SideBar />}
+      <ContentContainer>
+        <Routes>
+          <Route path="/patients" element={<PatientSelection />} />
+          <Route path="/patients/:id" element={<Profile />} />
+          <Route path="/patients/:id/add" element={<NewTest />} />
+          <Route
+            path="/patients/:id/add/preview"
+            element={<ExercisePreview />}
+          />
+          <Route path="/signin" element={<SigninForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<DashBoard />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </ContentContainer>
+    </AppContainer>
   );
 }
 

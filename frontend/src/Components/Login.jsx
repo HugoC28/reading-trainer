@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Container = styled.div`
   position: relative;
@@ -95,8 +97,16 @@ const Image = styled.img`
 
 const LoginForm = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showToast, setShowToast] = useState(false);
+
+  const notify = (message) => {
+    if (showToast) return;
+    toast(message, {
+      onOpen: () => setShowToast(true),
+      onClose: () => setShowToast(false),
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -106,18 +116,34 @@ const LoginForm = () => {
     });
   };
 
-  const handleSignIn = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
+    const response = await authService.isValidLogin(email, password);
 
-    if (await authService.isValidLogin(email, password)) {
+    if (response.success) {
       navigate("/");
+    } else {
+      notify(`Check your credentials: ${response.errorMessage}`);
     }
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSignIn}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeButton={false}
+        limit={1}
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "50%",
+          backgroundColor: "#ffcf53",
+        }}
+      />
+      <Form onSubmit={handleLogin}>
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"

@@ -20,11 +20,9 @@ const authService = {
       const user = userCredential.user;
       const token = await user.getIdToken();
       localStorage.setItem("token", token);
-      //alert("Login successful!");
-      return true;
+      return { success: true };
     } catch (error) {
-      //alert(`Login failed: ${error.message}`);
-      return false;
+      return { success: false, errorMessage: error.message };
     }
   },
   isValidSignup: async (email, password) => {
@@ -32,11 +30,9 @@ const authService = {
     const auth = getAuth(firebaseApp);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      alert("Sign Up successful!");
-      return true;
+      return { success: true };
     } catch (error) {
-      alert(`Signing Up failed: ${error.message}`);
-      return false;
+      return { success: false, errorMessage: error.message };
     }
   },
   isValidLogout: async () => {
@@ -45,11 +41,9 @@ const authService = {
       const auth = getAuth(firebaseApp);
       await signOut(auth);
       localStorage.removeItem("token");
-      //alert("Logout successful!");
-      return true;
+      return { success: true };
     } catch (error) {
-      //alert(`Logging out failed: ${error.message}`);
-      return false;
+      return { success: false, errorMessage: error.message };
     }
   },
 };

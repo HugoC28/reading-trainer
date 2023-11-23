@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { useExercise } from "../Contexts/ExerciseContext";
+//import { useExercise } from "../Contexts/ExerciseContext";
+import { useExercise } from "../hooks/useExercise";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Content = styled.div`
@@ -46,8 +47,7 @@ const Image = styled.img`
 `;
 
 const ExercisePreview = () => {
-  const { state: exerciseState } = useExercise();
-  const { generatedExercise } = exerciseState;
+  const { generatedExercise } = useExercise();
 
   return (
     <Content>

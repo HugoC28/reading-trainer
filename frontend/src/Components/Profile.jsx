@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { usePatient } from "../Contexts/PatientContext";
+//import { usePatient } from "../Contexts/PatientContext";
+import { usePatient } from "../hooks/usePatient";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
@@ -72,9 +73,7 @@ const StyledLink = styled(Link)`
 `;
 
 const Profile = () => {
-  const { state } = usePatient();
-  const { selectedPatient } = state;
-  //console.log(state);
+  const { selectedPatient } = usePatient();
 
   return (
     <Container>

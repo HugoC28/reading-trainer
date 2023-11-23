@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { usePatient } from "../Contexts/PatientContext";
-import { useExercise } from "../Contexts/ExerciseContext";
+//import { usePatient } from "../Contexts/PatientContext";
+import { usePatient } from "../hooks/usePatient";
+//import { useExercise } from "../Contexts/ExerciseContext";
+import { useExercise } from "../hooks/useExercise";
 import { useState } from "react";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
@@ -104,11 +106,10 @@ const NewTest = () => {
   const navigate = useNavigate();
 
   // Global state for the patient context
-  const { state: patientState } = usePatient();
-  const { selectedPatient } = patientState;
+  const { selectedPatient } = usePatient();
 
   // Global state for the exercise context
-  const { state: exerciseState, setGeneratedExercise } = useExercise();
+  const { changeGeneratedExercise } = useExercise();
 
   const [difficulty, setDifficulty] = useState(5);
   const [exerciseNumber, setExerciseNumber] = useState(5);
@@ -137,7 +138,7 @@ const NewTest = () => {
       alert("Please select topic and exercise type");
       return;
     }
-    setGeneratedExercise(null);
+    changeGeneratedExercise(null);
     navigate(`/patients/${selectedPatient.id}/add/preview`);
 
     try {
@@ -149,7 +150,7 @@ const NewTest = () => {
         selectedExerciseType: selectedExerciseType,
       });
 
-      setGeneratedExercise(response);
+      changeGeneratedExercise(response);
     } catch (error) {
       console.error("Error generating exercise:", error);
     }
