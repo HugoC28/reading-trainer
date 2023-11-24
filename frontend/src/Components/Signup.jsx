@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../config/authconfig";
+import authService from "../services/authService";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   position: relative;
@@ -85,6 +85,7 @@ const Image = styled.img`
 const SignUpForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const { notify } = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,15 +98,13 @@ const SignUpForm = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
+    const response = await authService.isValidSignup(email, password);
 
-    const auth = getAuth(firebaseApp);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Sign Up successful!");
+    if (response.success) {
       navigate("/login");
-    } catch (error) {
-      alert("Signing Up failed");
-      console.error(error);
+      notify(`Signing up successful! Login with your credentials.`);
+    } else {
+      notify(`Signing up failed: ${response.errorMessage}`);
     }
   };
 

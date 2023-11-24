@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { usePatient } from "../Contexts/PatientContext";
+import { usePatient } from "../hooks/usePatient";
 import { profiles } from "../mockData";
 
 const BoxesContainer = styled.div`
@@ -43,13 +43,13 @@ const Name = styled.h2`
 `;
 
 const PatientSelection = () => {
-  const { setSelectedPatient } = usePatient();
+  const { changeSelectedPatient } = usePatient();
 
   return (
     <BoxesContainer>
       {profiles.map((profile) => (
         <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
-          <Box onClick={() => setSelectedPatient(profile)}>
+          <Box onClick={() => changeSelectedPatient(profile)}>
             <Name>{profile.name}</Name>
           </Box>
         </StyledLink>

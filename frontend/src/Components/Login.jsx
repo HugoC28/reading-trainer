@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../config/authconfig";
+import authService from "../services/authService";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   position: relative;
@@ -96,8 +96,8 @@ const Image = styled.img`
 
 const LoginForm = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const { notify } = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -107,35 +107,22 @@ const LoginForm = () => {
     });
   };
 
-  const handleSignIn = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
-    console.log(email);
+    const response = await authService.isValidLogin(email, password);
 
-    const auth = getAuth(firebaseApp);
-    console.log(auth);
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(userCredential);
-      const user = userCredential.user;
-      const idToken = await user.getIdToken();
-      localStorage.setItem("token", idToken);
-      alert("Login successful!");
+    if (response.success) {
+      notify(`Successfully logged in with email: ${email}`);
       navigate("/");
-    } catch (error) {
-      console.log(error);
-      alert("Login failed. Check your credentials.");
-      console.error(error);
+    } else {
+      notify(`Check your credentials: ${response.errorMessage}`);
     }
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSignIn}>
+      <Form onSubmit={handleLogin}>
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"

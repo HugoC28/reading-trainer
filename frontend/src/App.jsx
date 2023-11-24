@@ -1,7 +1,5 @@
 import PatientSelection from "./Components/PatientSelection";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { PatientProvider } from "./Contexts/PatientContext";
-import { ExerciseProvider } from "./Contexts/ExerciseContext";
 import LoginForm from "./Components/Login";
 import SigninForm from "./Components/Signup";
 import { useEffect } from "react";
@@ -14,6 +12,8 @@ import NewTest from "./Components/NewTest";
 import ExercisePreview from "./Components/ExercisePreview";
 import SideBar from "./Components/SideBar";
 import styled from "styled-components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppContainer = styled.div`
   display: flex;
@@ -36,30 +36,33 @@ function App() {
   }, [navigate, token]);
 
   return (
-    <PatientProvider>
-      <ExerciseProvider>
-        <AppContainer>
-          {token && <SideBar />}
-          <ContentContainer>
-            <Routes>
-              <Route path="/patients" element={<PatientSelection />} />
-              <Route path="/patients/:id" element={<Profile />} />
-              <Route path="/patients/:id/add" element={<NewTest />} />
-              <Route
-                path="/patients/:id/add/preview"
-                element={<ExercisePreview />}
-              />
-              <Route path="/signin" element={<SigninForm />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/" element={<DashBoard />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </ContentContainer>
-        </AppContainer>
-      </ExerciseProvider>
-    </PatientProvider>
+    <AppContainer>
+      {token && <SideBar />}
+      <ContentContainer>
+        <ToastContainer
+          position="top-center"
+          autoClose={4000}
+          hideProgressBar={false}
+          closeButton={false}
+          limit={1}
+        />
+        <Routes>
+          <Route path="/patients" element={<PatientSelection />} />
+          <Route path="/patients/:id" element={<Profile />} />
+          <Route path="/patients/:id/add" element={<NewTest />} />
+          <Route
+            path="/patients/:id/add/preview"
+            element={<ExercisePreview />}
+          />
+          <Route path="/signin" element={<SigninForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<DashBoard />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </ContentContainer>
+    </AppContainer>
   );
 }
 
