@@ -23,6 +23,35 @@ const storageService = {
       return { success: false, errorMessage: error.message };
     }
   },
+  createPatient: async (formData) => {
+    try {
+      const createdAtTimestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), {
+        email: email,
+        name: firstName + " " + lastName,
+        createdAt: createdAtTimestamp,
+      });
+      return { success: true };
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
+
+  updatePatient: async (formData) => {
+    try {
+      const createdAtTimestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), {
+        email: email,
+        name: firstName + " " + lastName,
+        createdAt: createdAtTimestamp,
+      });
+      return { success: true };
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
 };
 
 export default storageService;

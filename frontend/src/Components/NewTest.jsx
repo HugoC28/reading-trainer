@@ -6,6 +6,7 @@ import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
 import openAIService from "../services/openAIService";
 import { useNavigate } from "react-router-dom";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   margin: 20px;
@@ -102,6 +103,7 @@ const exerciseTypes = [
 
 const NewTest = () => {
   const navigate = useNavigate();
+  const { notify } = useToast();
 
   // Global state for the patient context
   const { selectedPatient } = usePatient();
@@ -133,13 +135,13 @@ const NewTest = () => {
 
   const handleGenerateExercise = async () => {
     if (!selectedTopic || !selectedExerciseType) {
-      alert("Please select topic and exercise type");
+      notify("Please select topic and exercise type");
       return;
     }
-    changeGeneratedExercise(null);
-    navigate(`/patients/${selectedPatient.id}/add/preview`);
 
     try {
+      changeGeneratedExercise(null);
+
       // Call the service to generate the exercise
       const response = await openAIService.getExercise({
         difficulty: difficulty,
@@ -148,9 +150,12 @@ const NewTest = () => {
         selectedExerciseType: selectedExerciseType,
       });
 
+      notify("Starting generating the exercise.");
+      navigate(`/patients/${selectedPatient.id}/add/preview`);
+
       changeGeneratedExercise(response);
     } catch (error) {
-      console.error("Error generating exercise:", error);
+      notify(`An error occurred: ${error.message}`);
     }
   };
   return (
