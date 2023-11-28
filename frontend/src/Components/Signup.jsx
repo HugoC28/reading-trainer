@@ -52,7 +52,7 @@ const Button = styled.button`
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  margin-top: 73px;
+  margin-top: 30px;
   background-color: #ff9e58;
   color: white;
   border: none;
@@ -84,7 +84,12 @@ const Image = styled.img`
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
   const { notify } = useToast();
 
   const handleChange = (e) => {
@@ -97,8 +102,7 @@ const SignUpForm = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const { email, password } = formData;
-    const response = await authService.isValidSignup(email, password);
+    const response = await authService.isValidSignup(formData);
 
     if (response.success) {
       navigate("/login");
@@ -127,11 +131,37 @@ const SignUpForm = () => {
           value={formData.password}
           onChange={handleChange}
         />
+
+        <Label htmlFor="firstName">First name</Label>
+        <Input
+          type="text"
+          name="firstName"
+          placeholder="Enter your first name"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+
+        <Label htmlFor="lastName">Last name</Label>
+        <Input
+          type="text"
+          name="lastName"
+          placeholder="Enter your last name"
+          value={formData.lastName}
+          onChange={handleChange}
+        />
+
         <Button type="submit">Sign up</Button>
         <p style={{ color: "#9AA1A9" }}>
           Already have an account? <StyledLink to="/login">Log in</StyledLink>
         </p>
       </Form>
+    </Container>
+  );
+};
+
+export default SignUpForm;
+
+/*
 
       <Image
         src="../../images/Frog  3D Illustration 1.png"
@@ -185,8 +215,5 @@ const SignUpForm = () => {
         left="1050px"
         bottom="-105px"
       />
-    </Container>
-  );
-};
 
-export default SignUpForm;
+*/

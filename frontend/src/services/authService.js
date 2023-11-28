@@ -4,13 +4,16 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  deleteUser,
 } from "firebase/auth";
+import storageservice from "./storageService";
+
+const auth = getAuth(firebaseApp);
 
 // Taking care of the firebase authentication
 const authService = {
   isValidLogin: async (email, password) => {
     // Function that takes care of the login
-    const auth = getAuth(firebaseApp);
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -25,12 +28,31 @@ const authService = {
       return { success: false, errorMessage: error.message };
     }
   },
-  isValidSignup: async (email, password) => {
+  isValidSignup: async (formData) => {
+    const { email, password, firstName, lastName } = formData;
+
     // Function that takes care of the singup with new credentials
-    const auth = getAuth(firebaseApp);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      return { success: true };
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      const response = await storageservice.createTherapist(
+        user,
+        email,
+        firstName,
+        lastName
+      );
+
+      // It is possible that the user is created in the authentication service but not in the storage service.
+      // If this is the case, we delete the user from the authentication service.
+      if (!response.success) {
+        await deleteUser(user);
+        return response;
+      }
+      return response;
     } catch (error) {
       return { success: false, errorMessage: error.message };
     }
@@ -38,7 +60,6 @@ const authService = {
   isValidLogout: async () => {
     // Function to logouts
     try {
-      const auth = getAuth(firebaseApp);
       await signOut(auth);
       localStorage.removeItem("token");
       return { success: true };
