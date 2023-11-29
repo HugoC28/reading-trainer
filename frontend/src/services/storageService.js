@@ -6,6 +6,7 @@ import {
   setDoc,
   serverTimestamp,
   getDocs,
+  getDoc,
   collection,
 } from "firebase/firestore";
 import firebaseApp from "../config/authconfig";
@@ -43,13 +44,32 @@ const storageService = {
           id: doc.id,
         };
       });
-      //console.log("test");
-
       return { success: true, patients: patients };
     } catch (error) {
       return { success: false, errorMessage: error.message };
     }
   },
+
+  getPatient: async (userId, patientId) => {
+    try {
+      const patientRef = doc(db, `users/${userId}/patients/${patientId}`);
+
+      const docSnapshot = await getDoc(patientRef);
+      if (docSnapshot.exists()) {
+        const { createdAt, updatedAt, ...patientData } = docSnapshot.data();
+        return {
+          success: true,
+          patient: { ...patientData, id: docSnapshot.id },
+        };
+      } else {
+        // Handle the case where the patient does not exist
+        return { success: false, errorMessage: "Patient not found" };
+      }
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
+
   createPatient: async (formData) => {
     //TODO
   },

@@ -58,6 +58,7 @@ const PatientSelection = () => {
   const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
 
+  // Fetch patients from firebase for the logged in user.
   useEffect(() => {
     const fetchPatients = async () => {
       if (isLoading) return;
@@ -68,7 +69,7 @@ const PatientSelection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  if (isLoading)
+  if (isLoading || !loggedUsersPatients)
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />

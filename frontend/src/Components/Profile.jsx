@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { usePatient } from "../hooks/usePatient";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import storageService from "../services/storageService";
 
 const Container = styled.div`
   display: flex;
@@ -71,8 +75,39 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const Profile = () => {
-  const { selectedPatient } = usePatient();
+  const { selectedPatient, changeSelectedPatient } = usePatient();
+  const { id } = useParams();
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const user = useSelector((state) => state.user.currentUser);
+
+  // In case of a page refresh.
+  useEffect(() => {
+    const fetchPatient = async () => {
+      if (isLoading) return;
+      const response = await storageService.getPatient(user.uid, id);
+      changeSelectedPatient(response.patient);
+    };
+    fetchPatient();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
+  console.log(selectedPatient);
+
+  if (!selectedPatient) {
+    return (
+      <LoadingContainer>
+        <CircularProgress size={100} style={{ color: "#596780" }} />
+      </LoadingContainer>
+    );
+  }
 
   return (
     <Container>
@@ -81,11 +116,17 @@ const Profile = () => {
         <Text>Name: {selectedPatient.name}</Text>
         <Text>Age: {selectedPatient.age}</Text>
         <Text>Parents: {selectedPatient.parents}</Text>
-        <Text>Progress: {selectedPatient.progress}%</Text>
+        <Text>Progress: {selectedPatient.Progress}%</Text>
         <Text>Difficulties:</Text>
         <ul>
-          {selectedPatient.difficulties.map((difficulty, index) => (
-            <ListText key={index}>{difficulty}</ListText>
+          {selectedPatient.difficulties.map((d, index) => (
+            <ListText key={index}>{d}</ListText>
+          ))}
+        </ul>
+        <Text>Interests:</Text>
+        <ul>
+          {selectedPatient.interests.map((i, index) => (
+            <ListText key={index}>{i}</ListText>
           ))}
         </ul>
       </InfoBox>

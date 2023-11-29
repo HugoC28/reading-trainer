@@ -15,7 +15,6 @@ import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useListenAuthChanges } from "./hooks/useListenAuthChanges";
-import { useSelector } from "react-redux";
 
 const AppContainer = styled.div`
   display: flex;
