@@ -1,12 +1,15 @@
 import styled from "styled-components";
 import { usePatient } from "../hooks/usePatient";
 import { useExercise } from "../hooks/useExercise";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
 import openAIService from "../services/openAIService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useToast from "../hooks/useToast";
+import storageService from "../services/storageService";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Container = styled.div`
   margin: 20px;
@@ -94,6 +97,13 @@ const LinkContainer = styled.div`
     background-color: #596780;
   }
 `;
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const topics = ["Rabbits", "Bears", "Dinosaurs"];
 const exerciseTypes = [
   "Vocabulary Building",
@@ -103,18 +113,31 @@ const exerciseTypes = [
 
 const NewTest = () => {
   const navigate = useNavigate();
-  const { notify } = useToast();
-
-  // Global state for the patient context
-  const { selectedPatient } = usePatient();
-
-  // Global state for the exercise context
+  const { selectedPatient, changeSelectedPatient } = usePatient();
   const { changeGeneratedExercise } = useExercise();
-
+  const { id } = useParams();
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const user = useSelector((state) => state.user.currentUser);
+  const { notify } = useToast();
   const [difficulty, setDifficulty] = useState(5);
   const [exerciseNumber, setExerciseNumber] = useState(5);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState(null);
+
+  // In case of a page refresh, fetch the patient and its exercises from database.
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isLoading) return;
+      const response = await storageService.getPatient(user.uid, id);
+      if (!response.success) {
+        notify(response.errorMessage);
+        return;
+      }
+      changeSelectedPatient(response.patient);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   const selectDifficulty = (_, newValue) => {
     setDifficulty(newValue);
@@ -124,7 +147,6 @@ const NewTest = () => {
     setExerciseNumber(newValue);
   };
 
-  // Handler functions
   const selectTopic = (topic) => {
     setSelectedTopic(topic);
   };
@@ -158,9 +180,18 @@ const NewTest = () => {
       notify(`An error occurred: ${error.message}`);
     }
   };
+
+  if (!selectedPatient) {
+    return (
+      <LoadingContainer>
+        <CircularProgress size={100} style={{ color: "#596780" }} />
+      </LoadingContainer>
+    );
+  }
+
   return (
     <Container>
-      <Title>{`${selectedPatient.name}'s test`}</Title>
+      <Title>{`New exercise for ${selectedPatient.name}`}</Title>
       <TaskBox>
         <Upper>
           <UpperBox>
