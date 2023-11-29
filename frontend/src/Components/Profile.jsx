@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import storageService from "../services/storageService";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   display: flex;
@@ -87,19 +88,22 @@ const Profile = () => {
   const { id } = useParams();
   const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
+  const { notify } = useToast();
 
-  // In case of a page refresh.
+  // In case of a page refresh, fetch the patient and its exercises from database.
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchData = async () => {
       if (isLoading) return;
       const response = await storageService.getPatient(user.uid, id);
+      if (!response.success) {
+        notify(response.errorMessage);
+        return;
+      }
       changeSelectedPatient(response.patient);
     };
-    fetchPatient();
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
-
-  console.log(selectedPatient);
 
   if (!selectedPatient) {
     return (
@@ -130,15 +134,23 @@ const Profile = () => {
           ))}
         </ul>
       </InfoBox>
-      <Title>{`Latest test`}</Title>
+      <Title>{`Latest exercises`}</Title>
       <LowerContainer>
-        <LeftBox></LeftBox>
+        <LeftBox>
+          <ul>
+            {selectedPatient.exercises.map((e, index) => (
+              <ListText key={index}>
+                {e.title} TODO: ADD LINK TO THE EXERCISE
+              </ListText>
+            ))}
+          </ul>
+        </LeftBox>
         <StyledLink
           to={`/patients/${selectedPatient.id}/add`}
           key={selectedPatient.id}
         >
           <RightBox>
-            <Text>+ new test</Text>
+            <Text>+ new exercise</Text>
           </RightBox>
         </StyledLink>
       </LowerContainer>

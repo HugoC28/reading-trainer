@@ -5,6 +5,7 @@ import { usePatient } from "../hooks/usePatient";
 import storageService from "../services/storageService";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSelector } from "react-redux";
+import useToast from "../hooks/useToast";
 
 const BoxesContainer = styled.div`
   display: flex;
@@ -57,12 +58,17 @@ const PatientSelection = () => {
     usePatient();
   const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
+  const { notify } = useToast();
 
   // Fetch patients from firebase for the logged in user.
   useEffect(() => {
     const fetchPatients = async () => {
       if (isLoading) return;
       const response = await storageService.getPatients(user.uid);
+      if (!response.success) {
+        notify(response.errorMessage);
+        return;
+      }
       setLoggedUserPatients(response.patients);
     };
     fetchPatients();

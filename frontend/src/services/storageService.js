@@ -38,6 +38,7 @@ const storageService = {
       const data = await getDocs(loggedUserPatientsRef);
       const patients = data.docs.map((doc) => {
         // Remove createdAt and changedAt from the patient data because those cause problems in redux store.
+        // eslint-disable-next-line no-unused-vars
         const { createdAt, updatedAt, ...patientData } = doc.data();
         return {
           ...patientData,
@@ -53,16 +54,29 @@ const storageService = {
   getPatient: async (userId, patientId) => {
     try {
       const patientRef = doc(db, `users/${userId}/patients/${patientId}`);
+      const selectedPatientExercisesRef = collection(
+        db,
+        `users/${userId}/patients/${patientId}/exercises`
+      );
 
-      const docSnapshot = await getDoc(patientRef);
-      if (docSnapshot.exists()) {
-        const { createdAt, updatedAt, ...patientData } = docSnapshot.data();
+      const patientResponse = await getDoc(patientRef);
+      if (patientResponse.exists()) {
+        // eslint-disable-next-line no-unused-vars
+        const { createdAt, updatedAt, ...patientData } = patientResponse.data();
+        const exerciseResponse = await getDocs(selectedPatientExercisesRef);
+        const exercises = exerciseResponse.docs.map((doc) => {
+          // eslint-disable-next-line no-unused-vars
+          const { createdAt, ...exerciseData } = doc.data();
+          return {
+            ...exerciseData,
+            id: doc.id,
+          };
+        });
         return {
           success: true,
-          patient: { ...patientData, id: docSnapshot.id },
+          patient: { ...patientData, id: patientData.id, exercises: exercises },
         };
       } else {
-        // Handle the case where the patient does not exist
         return { success: false, errorMessage: "Patient not found" };
       }
     } catch (error) {
