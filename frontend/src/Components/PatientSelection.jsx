@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import { usePatient } from "../hooks/usePatient";
-import { profiles } from "../mockData";
+import storageService from "../services/storageService";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useSelector } from "react-redux";
 
 const BoxesContainer = styled.div`
   display: flex;
@@ -42,12 +45,39 @@ const Name = styled.h2`
   padding: 10px;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const PatientSelection = () => {
-  const { changeSelectedPatient } = usePatient();
+  const { changeSelectedPatient, loggedUsersPatients, setLoggedUserPatients } =
+    usePatient();
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const user = useSelector((state) => state.user.currentUser);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      if (isLoading) return;
+      const response = await storageService.getPatients(user.uid);
+      setLoggedUserPatients(response.patients);
+    };
+    fetchPatients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
+  if (isLoading)
+    return (
+      <LoadingContainer>
+        <CircularProgress size={100} style={{ color: "#596780" }} />
+      </LoadingContainer>
+    );
 
   return (
     <BoxesContainer>
-      {profiles.map((profile) => (
+      {loggedUsersPatients.map((profile) => (
         <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
           <Box onClick={() => changeSelectedPatient(profile)}>
             <Name>{profile.name}</Name>

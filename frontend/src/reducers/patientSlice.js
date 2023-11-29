@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   selectedPatient: null,
+  loggedUsersPatients: [],
 };
 
 export const patientSlice = createSlice({
@@ -11,8 +12,12 @@ export const patientSlice = createSlice({
     setSelectedPatient(state, action) {
       state.selectedPatient = action.payload;
     },
+    setLoggedUsersPatients(state, action) {
+      state.loggedUsersPatients = action.payload;
+    },
   },
 });
 
-export const { setSelectedPatient } = patientSlice.actions;
+export const { setSelectedPatient, setLoggedUsersPatients } =
+  patientSlice.actions;
 export default patientSlice.reducer;
