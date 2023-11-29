@@ -99,19 +99,22 @@ const Profile = () => {
         notify(response.errorMessage);
         return;
       }
+      //console.log(response);
       changeSelectedPatient(response.patient);
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  if (!selectedPatient) {
+  if (!selectedPatient || !selectedPatient.exercises) {
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />
       </LoadingContainer>
     );
   }
+
+  //console.log(selectedPatient);
 
   return (
     <Container>

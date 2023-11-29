@@ -19,7 +19,7 @@ const Title = styled.h1`
   margin-top: 40px;
 `;
 
-const Text = styled.p`
+const Text = styled.span`
   font-family: "Acme", sans-serif;
   font-size: 1em;
   font-weight: 400;
@@ -61,7 +61,7 @@ const SelectionLabel = styled.div`
   width: 250px;
 
   border: 2px solid
-    ${({ isSelected }) => (isSelected ? "black" : "transparent")};
+    ${({ $isSelected }) => ($isSelected ? "black" : "transparent")};
 
   border-radius: 10px;
   cursor: pointer;
@@ -168,10 +168,10 @@ const NewTest = () => {
             {exerciseTypes.map((type, index) => (
               <SelectionLabel
                 key={index}
-                isSelected={selectedExerciseType === type}
+                $isSelected={selectedExerciseType === type}
                 onClick={() => selectExerciseType(type)}
               >
-                <Text>{type} </Text>
+                <Text>{type}</Text>
               </SelectionLabel>
             ))}
             <SliderWrapper>
@@ -206,7 +206,7 @@ const NewTest = () => {
             {topics.map((topic, index) => (
               <SelectionLabel
                 key={index}
-                isSelected={selectedTopic === topic}
+                $isSelected={selectedTopic === topic}
                 onClick={() => selectTopic(topic)}
               >
                 <Text>{topic} </Text>

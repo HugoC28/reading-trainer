@@ -66,7 +66,7 @@ const storageService = {
         const exerciseResponse = await getDocs(selectedPatientExercisesRef);
         const exercises = exerciseResponse.docs.map((doc) => {
           // eslint-disable-next-line no-unused-vars
-          const { createdAt, ...exerciseData } = doc.data();
+          const { createdAt, createdBy, ...exerciseData } = doc.data();
           return {
             ...exerciseData,
             id: doc.id,
@@ -74,7 +74,11 @@ const storageService = {
         });
         return {
           success: true,
-          patient: { ...patientData, id: patientData.id, exercises: exercises },
+          patient: {
+            ...patientData,
+            id: patientResponse.id,
+            exercises: exercises,
+          },
         };
       } else {
         return { success: false, errorMessage: "Patient not found" };
