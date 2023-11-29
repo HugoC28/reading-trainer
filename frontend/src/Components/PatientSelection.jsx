@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePatient } from "../hooks/usePatient";
 import storageService from "../services/storageService";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSelector } from "react-redux";
 import useToast from "../hooks/useToast";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import NewPatientPopup from "./NewPatientPopup";
 
 const BoxesContainer = styled.div`
   display: flex;
@@ -46,6 +48,14 @@ const Name = styled.h2`
   padding: 10px;
 `;
 
+const AddIcon = styled(AddCircleOutlineIcon)`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+`;
+
 const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -59,18 +69,21 @@ const PatientSelection = () => {
   const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpen = () => setOpenModal(true);
+
+  const fetchPatients = async () => {
+    if (isLoading) return;
+    const response = await storageService.getPatients(user.uid);
+    if (!response.success) {
+      notify(response.errorMessage);
+      return;
+    }
+    setLoggedUserPatients(response.patients);
+  };
 
   // Fetch patients from firebase for the logged in user.
   useEffect(() => {
-    const fetchPatients = async () => {
-      if (isLoading) return;
-      const response = await storageService.getPatients(user.uid);
-      if (!response.success) {
-        notify(response.errorMessage);
-        return;
-      }
-      setLoggedUserPatients(response.patients);
-    };
     fetchPatients();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -83,15 +96,24 @@ const PatientSelection = () => {
     );
 
   return (
-    <BoxesContainer>
-      {loggedUsersPatients.map((profile) => (
-        <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
-          <Box onClick={() => changeSelectedPatient(profile)}>
-            <Name>{profile.name}</Name>
-          </Box>
-        </StyledLink>
-      ))}
-    </BoxesContainer>
+    <>
+      <BoxesContainer>
+        {loggedUsersPatients.map((profile) => (
+          <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
+            <Box onClick={() => changeSelectedPatient(profile)}>
+              <Name>{profile.name}</Name>
+            </Box>
+          </StyledLink>
+        ))}
+        <AddIcon onClick={handleOpen} fontSize="large" />
+      </BoxesContainer>
+
+      <NewPatientPopup
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        fetchPatients={fetchPatients}
+      />
+    </>
   );
 };
 

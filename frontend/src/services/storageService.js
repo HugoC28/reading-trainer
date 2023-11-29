@@ -1,5 +1,3 @@
-//TODO. Add here all the methods that you need to access the storage service, i.e. reading and writing to firebase storage.
-//TODO. You can use the methods that are already implemented in the authService.js file as an example.
 import {
   getFirestore,
   doc,
@@ -8,6 +6,7 @@ import {
   getDocs,
   getDoc,
   collection,
+  addDoc,
 } from "firebase/firestore";
 import firebaseApp from "../config/authconfig";
 
@@ -88,13 +87,54 @@ const storageService = {
     }
   },
 
-  createPatient: async (formData) => {
+  createPatient: async (userId, patientData) => {
+    try {
+      console.log("test1");
+      // Reference to the patients collection for a specific user
+      const patientsRef = collection(db, `users/${userId}/patients`);
+
+      // Process the data before saving it to the database
+      patientData = processData(patientData);
+
+      const timeStamp = serverTimestamp();
+
+      // Add the new patient
+      const s = await addDoc(patientsRef, {
+        ...patientData,
+        progress: 0,
+        createdAt: timeStamp,
+        updatedAt: timeStamp,
+      });
+
+      console.log(s);
+
+      return {
+        success: true,
+        message: "Patient created successfully",
+      };
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
+
+  updatePatient: async () => {
     //TODO
   },
 
-  updatePatient: async (formData) => {
+  saveExercise: async () => {
     //TODO
   },
 };
+
+function processData(data) {
+  return {
+    ...data,
+    age: parseInt(data.age, 10),
+    difficulties: data.difficulties
+      .split(",")
+      .map((difficulty) => difficulty.trim()),
+    interests: data.interests.split(",").map((interest) => interest.trim()),
+  };
+}
 
 export default storageService;
