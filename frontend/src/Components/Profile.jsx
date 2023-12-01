@@ -86,35 +86,34 @@ const LoadingContainer = styled.div`
 const Profile = () => {
   const { selectedPatient, changeSelectedPatient } = usePatient();
   const { id } = useParams();
-  const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
 
+  const fetchData = async () => {
+    if (!user) return;
+    const response = await storageService.getPatient(user.uid, id);
+    if (!response.success) {
+      notify(response.errorMessage);
+      return;
+    }
+    changeSelectedPatient(response.patient);
+  };
+
   // In case of a page refresh, fetch the patient and its exercises from database.
   useEffect(() => {
-    const fetchData = async () => {
-      if (isLoading) return;
-      const response = await storageService.getPatient(user.uid, id);
-      if (!response.success) {
-        notify(response.errorMessage);
-        return;
-      }
-      //console.log(response);
-      changeSelectedPatient(response.patient);
-    };
+    // In case of a old selectedPatient, set it to null.
+    changeSelectedPatient(null);
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [user]);
 
-  if (!selectedPatient || !selectedPatient.exercises) {
+  if (selectedPatient === null) {
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />
       </LoadingContainer>
     );
   }
-
-  //console.log(selectedPatient);
 
   return (
     <Container>
@@ -123,7 +122,7 @@ const Profile = () => {
         <Text>Name: {selectedPatient.name}</Text>
         <Text>Age: {selectedPatient.age}</Text>
         <Text>Parents: {selectedPatient.parents}</Text>
-        <Text>Progress: {selectedPatient.Progress}%</Text>
+        <Text>Progress: {selectedPatient.progress}%</Text>
         <Text>Difficulties:</Text>
         <ul>
           {selectedPatient.difficulties.map((d, index) => (

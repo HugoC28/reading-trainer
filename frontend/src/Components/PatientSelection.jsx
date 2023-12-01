@@ -64,16 +64,14 @@ const LoadingContainer = styled.div`
 `;
 
 const PatientSelection = () => {
-  const { changeSelectedPatient, loggedUsersPatients, setLoggedUserPatients } =
-    usePatient();
-  const isLoading = useSelector((state) => state.user.isLoading);
+  const { loggedUsersPatients, setLoggedUserPatients } = usePatient();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
   const [openModal, setOpenModal] = useState(false);
   const handleOpen = () => setOpenModal(true);
 
   const fetchPatients = async () => {
-    if (isLoading) return;
+    if (!user) return;
     const response = await storageService.getPatients(user.uid);
     if (!response.success) {
       notify(response.errorMessage);
@@ -86,9 +84,9 @@ const PatientSelection = () => {
   useEffect(() => {
     fetchPatients();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [user]);
 
-  if (isLoading || !loggedUsersPatients)
+  if (!loggedUsersPatients)
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />
@@ -100,7 +98,7 @@ const PatientSelection = () => {
       <BoxesContainer>
         {loggedUsersPatients.map((profile) => (
           <StyledLink to={`/patients/${profile.id}`} key={profile.id}>
-            <Box onClick={() => changeSelectedPatient(profile)}>
+            <Box>
               <Name>{profile.name}</Name>
             </Box>
           </StyledLink>

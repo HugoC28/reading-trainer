@@ -116,18 +116,19 @@ const NewTest = () => {
   const { selectedPatient, changeSelectedPatient } = usePatient();
   const { changeGeneratedExercise } = useExercise();
   const { id } = useParams();
-  const isLoading = useSelector((state) => state.user.isLoading);
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
-  const [difficulty, setDifficulty] = useState(5);
-  const [exerciseNumber, setExerciseNumber] = useState(5);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState(null);
+  const [exerciseConfig, setExerciseConfig] = useState({
+    difficulty: 5,
+    exerciseNumber: 5,
+    selectedTopic: null,
+    selectedExerciseType: null,
+  });
 
   // In case of a page refresh, fetch the patient and its exercises from database.
   useEffect(() => {
     const fetchData = async () => {
-      if (isLoading) return;
+      if (!user) return;
       const response = await storageService.getPatient(user.uid, id);
       if (!response.success) {
         notify(response.errorMessage);
@@ -137,25 +138,18 @@ const NewTest = () => {
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [user]);
 
-  const selectDifficulty = (_, newValue) => {
-    setDifficulty(newValue);
-  };
-
-  const selectNumber = (_, newValue) => {
-    setExerciseNumber(newValue);
-  };
-
-  const selectTopic = (topic) => {
-    setSelectedTopic(topic);
-  };
-
-  const selectExerciseType = (type) => {
-    setSelectedExerciseType(type);
+  const handleConfigChange = (field, value) => {
+    setExerciseConfig((prevConfig) => ({
+      ...prevConfig,
+      [field]: value,
+    }));
   };
 
   const handleGenerateExercise = async () => {
+    const { selectedTopic, selectedExerciseType } = exerciseConfig;
+
     if (!selectedTopic || !selectedExerciseType) {
       notify("Please select topic and exercise type");
       return;
@@ -163,17 +157,10 @@ const NewTest = () => {
 
     try {
       changeGeneratedExercise(null);
+      navigate(`/patients/${selectedPatient.id}/add/preview`);
 
       // Call the service to generate the exercise
-      const response = await openAIService.getExercise({
-        difficulty: difficulty,
-        exerciseNumber: exerciseNumber,
-        selectedTopic: selectedTopic,
-        selectedExerciseType: selectedExerciseType,
-      });
-
-      notify("Starting generating the exercise.");
-      navigate(`/patients/${selectedPatient.id}/add/preview`);
+      const response = await openAIService.getExercise(exerciseConfig);
 
       changeGeneratedExercise(response);
     } catch (error) {
@@ -199,8 +186,8 @@ const NewTest = () => {
             {exerciseTypes.map((type, index) => (
               <SelectionLabel
                 key={index}
-                $isSelected={selectedExerciseType === type}
-                onClick={() => selectExerciseType(type)}
+                $isSelected={exerciseConfig.selectedExerciseType === type}
+                onClick={() => handleConfigChange("selectedExerciseType", type)}
               >
                 <Text>{type}</Text>
               </SelectionLabel>
@@ -210,8 +197,10 @@ const NewTest = () => {
                 <Text>Number:</Text>
               </Typography>
               <Slider
-                value={exerciseNumber}
-                onChange={selectNumber}
+                value={exerciseConfig.exerciseNumber}
+                onChange={(_, newValue) =>
+                  handleConfigChange("exerciseNumber", newValue)
+                }
                 valueLabelDisplay="auto"
                 aria-labelledby="exercise-number-slider"
                 min={1}
@@ -237,8 +226,8 @@ const NewTest = () => {
             {topics.map((topic, index) => (
               <SelectionLabel
                 key={index}
-                $isSelected={selectedTopic === topic}
-                onClick={() => selectTopic(topic)}
+                $isSelected={exerciseConfig.selectedTopic === topic}
+                onClick={() => handleConfigChange("selectedTopic", topic)}
               >
                 <Text>{topic} </Text>
               </SelectionLabel>
@@ -248,8 +237,10 @@ const NewTest = () => {
                 <Text>Difficulty:</Text>
               </Typography>
               <Slider
-                value={difficulty}
-                onChange={selectDifficulty}
+                value={exerciseConfig.difficulty}
+                onChange={(_, newValue) =>
+                  handleConfigChange("difficulty", newValue)
+                }
                 valueLabelDisplay="auto"
                 aria-labelledby="difficulty-slider"
                 min={1}

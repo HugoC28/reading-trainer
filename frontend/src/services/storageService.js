@@ -17,7 +17,6 @@ const storageService = {
   createTherapist: async (user, email, firstName, lastName) => {
     try {
       // Create a new document in the users collection when signing up.
-      // Don't add patients at this point because the therapist has no patients yet.
       const createdAtTimestamp = serverTimestamp();
 
       await setDoc(doc(db, "users", user.uid), {
@@ -89,7 +88,6 @@ const storageService = {
 
   createPatient: async (userId, patientData) => {
     try {
-      console.log("test1");
       // Reference to the patients collection for a specific user
       const patientsRef = collection(db, `users/${userId}/patients`);
 
@@ -99,14 +97,12 @@ const storageService = {
       const timeStamp = serverTimestamp();
 
       // Add the new patient
-      const s = await addDoc(patientsRef, {
+      await addDoc(patientsRef, {
         ...patientData,
         progress: 0,
         createdAt: timeStamp,
         updatedAt: timeStamp,
       });
-
-      console.log(s);
 
       return {
         success: true,
@@ -123,6 +119,12 @@ const storageService = {
 
   saveExercise: async () => {
     //TODO
+  },
+  deleteExercise: async () => {
+    //Dunno is this needed? TODO
+  },
+  deletePatient: async () => {
+    //Dunno is this needed? TODO
   },
 };
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { setCurrentUser, setLoading } from "../reducers/userSlice";
+import { setCurrentUser } from "../reducers/userSlice";
 
 export const useListenAuthChanges = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ export const useListenAuthChanges = () => {
       } else {
         dispatch(setCurrentUser(null));
       }
-      dispatch(setLoading(false));
     });
 
     return () => unsubscribe();

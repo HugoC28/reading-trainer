@@ -7,16 +7,15 @@ import { useSelector } from "react-redux";
 
 const ModalContainer = styled.div`
   background-color: white;
-  margin: 100px;
-  padding: 20px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  width: 400px;
+  padding: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #e5e1e1;
@@ -24,9 +23,6 @@ const Input = styled.input`
   border-radius: 25px;
   font-family: "Acme", sans-serif;
   color: #bcbcbc;
-  @media (min-width: 768px) {
-    width: 250px;
-  }
 `;
 
 const Label = styled.label`
@@ -36,14 +32,20 @@ const Label = styled.label`
   font-family: "Acme", sans-serif;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  margin-top: 20px;
+`;
+
 const Button = styled.button`
-  width: 100%;
   padding: 10px;
-  margin: 10px 0;
-  margin-top: 30px;
   background-color: #ff9e58;
   color: white;
   border: none;
+  font-family: "Acme", sans-serif;
+  width: 100px;
   border-radius: 25px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
@@ -114,7 +116,17 @@ const NewPatientPopup = ({ openModal, setOpenModal, fetchPatients }) => {
   };
 
   return (
-    <Modal open={openModal} onClose={handleClose} disableAutoFocus={true}>
+    <Modal
+      open={openModal}
+      onClose={handleClose}
+      disableAutoFocus={true}
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        display: "flex",
+        padding: "20px",
+      }}
+    >
       <ModalContainer>
         <Label htmlFor="name">Patient full name</Label>
         <Input
@@ -158,8 +170,10 @@ const NewPatientPopup = ({ openModal, setOpenModal, fetchPatients }) => {
           value={formData.interests}
           onChange={handleChange}
         />
-        <Button onClick={handleCreate}>Create</Button>
-        <Button onClick={handleClear}>Clear </Button>
+        <ButtonContainer>
+          <Button onClick={handleCreate}>Create</Button>
+          <Button onClick={handleClear}>Clear </Button>
+        </ButtonContainer>
       </ModalContainer>
     </Modal>
   );
