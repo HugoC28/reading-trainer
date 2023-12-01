@@ -57,15 +57,13 @@ const ExercisePreview = () => {
         {generatedExercise ? (
           // Display content when generatedExercise is not null
           <>
-            {Object.entries(generatedExercise).map(
-              ([key, { sentences, url }]) => (
-                <Item key={key}>
-                  <Image src={url} alt={`story img`} />
+            <Item>
+              <Text>{generatedExercise["Title"]}</Text>
 
-                  <Text>{sentences}</Text>
-                </Item>
-              )
-            )}
+              <Image src={generatedExercise["Url"]} alt={`story img`} />
+
+              <Text>{generatedExercise["Story"]}</Text>
+            </Item>
           </>
         ) : (
           // Display loading icon when generatedExercise is null

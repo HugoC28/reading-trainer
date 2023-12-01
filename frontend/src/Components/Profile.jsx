@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import { usePatient } from "../hooks/usePatient";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import storageService from "../services/storageService";
+import useToast from "../hooks/useToast";
 
 const Container = styled.div`
   display: flex;
@@ -71,8 +76,44 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const Profile = () => {
-  const { selectedPatient } = usePatient();
+  const { selectedPatient, changeSelectedPatient } = usePatient();
+  const { id } = useParams();
+  const user = useSelector((state) => state.user.currentUser);
+  const { notify } = useToast();
+
+  const fetchData = async () => {
+    if (!user) return;
+    const response = await storageService.getPatient(user.uid, id);
+    if (!response.success) {
+      notify(response.errorMessage);
+      return;
+    }
+    changeSelectedPatient(response.patient);
+  };
+
+  // In case of a page refresh, fetch the patient and its exercises from database.
+  useEffect(() => {
+    // In case of a old selectedPatient, set it to null.
+    changeSelectedPatient(null);
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  if (selectedPatient === null) {
+    return (
+      <LoadingContainer>
+        <CircularProgress size={100} style={{ color: "#596780" }} />
+      </LoadingContainer>
+    );
+  }
 
   return (
     <Container>
@@ -84,20 +125,34 @@ const Profile = () => {
         <Text>Progress: {selectedPatient.progress}%</Text>
         <Text>Difficulties:</Text>
         <ul>
-          {selectedPatient.difficulties.map((difficulty, index) => (
-            <ListText key={index}>{difficulty}</ListText>
+          {selectedPatient.difficulties.map((d, index) => (
+            <ListText key={index}>{d}</ListText>
+          ))}
+        </ul>
+        <Text>Interests:</Text>
+        <ul>
+          {selectedPatient.interests.map((i, index) => (
+            <ListText key={index}>{i}</ListText>
           ))}
         </ul>
       </InfoBox>
-      <Title>{`Latest test`}</Title>
+      <Title>{`Latest exercises`}</Title>
       <LowerContainer>
-        <LeftBox></LeftBox>
+        <LeftBox>
+          <ul>
+            {selectedPatient.exercises.map((e, index) => (
+              <ListText key={index}>
+                {e.title} TODO: ADD LINK TO THE EXERCISE
+              </ListText>
+            ))}
+          </ul>
+        </LeftBox>
         <StyledLink
           to={`/patients/${selectedPatient.id}/add`}
           key={selectedPatient.id}
         >
           <RightBox>
-            <Text>+ new test</Text>
+            <Text>+ new exercise</Text>
           </RightBox>
         </StyledLink>
       </LowerContainer>

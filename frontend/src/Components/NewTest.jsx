@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { usePatient } from "../hooks/usePatient";
 import { useExercise } from "../hooks/useExercise";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
 import openAIService from "../services/openAIService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useToast from "../hooks/useToast";
+import storageService from "../services/storageService";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Container = styled.div`
   margin: 20px;
@@ -18,7 +22,7 @@ const Title = styled.h1`
   margin-top: 40px;
 `;
 
-const Text = styled.p`
+const Text = styled.span`
   font-family: "Acme", sans-serif;
   font-size: 1em;
   font-weight: 400;
@@ -60,7 +64,7 @@ const SelectionLabel = styled.div`
   width: 250px;
 
   border: 2px solid
-    ${({ isSelected }) => (isSelected ? "black" : "transparent")};
+    ${({ $isSelected }) => ($isSelected ? "black" : "transparent")};
 
   border-radius: 10px;
   cursor: pointer;
@@ -93,6 +97,13 @@ const LinkContainer = styled.div`
     background-color: #596780;
   }
 `;
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const topics = ["Rabbits", "Bears", "Dinosaurs"];
 const exerciseTypes = [
   "Vocabulary Building",
@@ -102,60 +113,72 @@ const exerciseTypes = [
 
 const NewTest = () => {
   const navigate = useNavigate();
-
-  // Global state for the patient context
-  const { selectedPatient } = usePatient();
-
-  // Global state for the exercise context
+  const { selectedPatient, changeSelectedPatient } = usePatient();
   const { changeGeneratedExercise } = useExercise();
+  const { id } = useParams();
+  const user = useSelector((state) => state.user.currentUser);
+  const { notify } = useToast();
+  const [exerciseConfig, setExerciseConfig] = useState({
+    difficulty: 5,
+    exerciseNumber: 5,
+    selectedTopic: null,
+    selectedExerciseType: null,
+  });
 
-  const [difficulty, setDifficulty] = useState(5);
-  const [exerciseNumber, setExerciseNumber] = useState(5);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState(null);
+  // In case of a page refresh, fetch the patient and its exercises from database.
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+      const response = await storageService.getPatient(user.uid, id);
+      if (!response.success) {
+        notify(response.errorMessage);
+        return;
+      }
+      changeSelectedPatient(response.patient);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
-  const selectDifficulty = (_, newValue) => {
-    setDifficulty(newValue);
-  };
-
-  const selectNumber = (_, newValue) => {
-    setExerciseNumber(newValue);
-  };
-
-  // Handler functions
-  const selectTopic = (topic) => {
-    setSelectedTopic(topic);
-  };
-
-  const selectExerciseType = (type) => {
-    setSelectedExerciseType(type);
+  const handleConfigChange = (field, value) => {
+    setExerciseConfig((prevConfig) => ({
+      ...prevConfig,
+      [field]: value,
+    }));
   };
 
   const handleGenerateExercise = async () => {
+    const { selectedTopic, selectedExerciseType } = exerciseConfig;
+
     if (!selectedTopic || !selectedExerciseType) {
-      alert("Please select topic and exercise type");
+      notify("Please select topic and exercise type");
       return;
     }
-    changeGeneratedExercise(null);
-    navigate(`/patients/${selectedPatient.id}/add/preview`);
 
     try {
+      changeGeneratedExercise(null);
+      navigate(`/patients/${selectedPatient.id}/add/preview`);
+
       // Call the service to generate the exercise
-      const response = await openAIService.getExercise({
-        difficulty: difficulty,
-        exerciseNumber: exerciseNumber,
-        selectedTopic: selectedTopic,
-        selectedExerciseType: selectedExerciseType,
-      });
+      const response = await openAIService.getExercise(exerciseConfig);
 
       changeGeneratedExercise(response);
     } catch (error) {
-      console.error("Error generating exercise:", error);
+      notify(`An error occurred: ${error.message}`);
     }
   };
+
+  if (!selectedPatient) {
+    return (
+      <LoadingContainer>
+        <CircularProgress size={100} style={{ color: "#596780" }} />
+      </LoadingContainer>
+    );
+  }
+
   return (
     <Container>
-      <Title>{`${selectedPatient.name}'s test`}</Title>
+      <Title>{`New exercise for ${selectedPatient.name}`}</Title>
       <TaskBox>
         <Upper>
           <UpperBox>
@@ -163,10 +186,10 @@ const NewTest = () => {
             {exerciseTypes.map((type, index) => (
               <SelectionLabel
                 key={index}
-                isSelected={selectedExerciseType === type}
-                onClick={() => selectExerciseType(type)}
+                $isSelected={exerciseConfig.selectedExerciseType === type}
+                onClick={() => handleConfigChange("selectedExerciseType", type)}
               >
-                <Text>{type} </Text>
+                <Text>{type}</Text>
               </SelectionLabel>
             ))}
             <SliderWrapper>
@@ -174,8 +197,10 @@ const NewTest = () => {
                 <Text>Number:</Text>
               </Typography>
               <Slider
-                value={exerciseNumber}
-                onChange={selectNumber}
+                value={exerciseConfig.exerciseNumber}
+                onChange={(_, newValue) =>
+                  handleConfigChange("exerciseNumber", newValue)
+                }
                 valueLabelDisplay="auto"
                 aria-labelledby="exercise-number-slider"
                 min={1}
@@ -201,8 +226,8 @@ const NewTest = () => {
             {topics.map((topic, index) => (
               <SelectionLabel
                 key={index}
-                isSelected={selectedTopic === topic}
-                onClick={() => selectTopic(topic)}
+                $isSelected={exerciseConfig.selectedTopic === topic}
+                onClick={() => handleConfigChange("selectedTopic", topic)}
               >
                 <Text>{topic} </Text>
               </SelectionLabel>
@@ -212,8 +237,10 @@ const NewTest = () => {
                 <Text>Difficulty:</Text>
               </Typography>
               <Slider
-                value={difficulty}
-                onChange={selectDifficulty}
+                value={exerciseConfig.difficulty}
+                onChange={(_, newValue) =>
+                  handleConfigChange("difficulty", newValue)
+                }
                 valueLabelDisplay="auto"
                 aria-labelledby="difficulty-slider"
                 min={1}

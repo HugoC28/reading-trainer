@@ -14,6 +14,7 @@ import SideBar from "./Components/SideBar";
 import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useListenAuthChanges } from "./hooks/useListenAuthChanges";
 
 const AppContainer = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ const ContentContainer = styled.div`
 
 function App() {
   const navigate = useNavigate();
+  useListenAuthChanges();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -47,6 +49,8 @@ function App() {
           limit={1}
         />
         <Routes>
+          <Route path="/signin" element={<SigninForm />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/patients" element={<PatientSelection />} />
           <Route path="/patients/:id" element={<Profile />} />
           <Route path="/patients/:id/add" element={<NewTest />} />
@@ -54,8 +58,6 @@ function App() {
             path="/patients/:id/add/preview"
             element={<ExercisePreview />}
           />
-          <Route path="/signin" element={<SigninForm />} />
-          <Route path="/login" element={<LoginForm />} />
           <Route path="/" element={<DashBoard />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
