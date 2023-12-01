@@ -26,6 +26,7 @@ const Form = styled.form`
   border-radius: 10px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   background-color: white;
+  z-index: 2;
 `;
 
 const Input = styled.input`
@@ -59,7 +60,7 @@ const Button = styled.button`
   border-radius: 25px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-
+  transition: background-color 0.3s ease;
   &:hover {
     background-color: #ffcf53;
   }
@@ -74,12 +75,18 @@ const StyledLink = styled(Link)`
 `;
 
 const Image = styled.img`
-  width: ${(props) => props.width || "100px"};
-  height: ${(props) => props.height || "100px"};
-  transform: rotate(${(props) => props.rotate || "0"}deg);
+  width: 100%;
   position: absolute;
-  bottom: ${(props) => props.bottom || "auto"};
-  left: ${(props) => props.left || "auto"};
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+`;
+
+const Logo = styled.img`
+  width: 220px;
+  position: absolute;
+  top: 50px;
+  left: 50px;
 `;
 
 const SignUpForm = () => {
@@ -106,14 +113,20 @@ const SignUpForm = () => {
 
     if (response.success) {
       navigate("/login");
-      notify(`Signing up successful! Login with your credentials.`);
+      notify(
+        `Signing up successful! Login with your credentials.`,
+        "success",
+        "#ffeab4"
+      );
     } else {
-      notify(`Signing up failed: ${response.errorMessage}`);
+      notify(`Signing up failed: ${response.errorMessage}`, "error");
     }
   };
 
   return (
     <Container>
+      <Logo src="../../images/Logo.png" alt="Logo" />
+
       <Form onSubmit={handleSignUp}>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -155,65 +168,10 @@ const SignUpForm = () => {
           Already have an account? <StyledLink to="/login">Log in</StyledLink>
         </p>
       </Form>
+
+      <Image src="../../images/Animals.png" alt="Background" />
     </Container>
   );
 };
 
 export default SignUpForm;
-
-/*
-
-      <Image
-        src="../../images/Frog  3D Illustration 1.png"
-        alt="Frog"
-        rotate={20}
-        width="450px"
-        height="450px"
-        left="-100px"
-        bottom="-130px"
-      />
-      <Image
-        src="../../images/Bird  3D Illustration 1.png"
-        alt="Bird"
-        width="350px"
-        height="350px"
-        left="130px"
-        bottom="-100px"
-      />
-      <Image
-        src="../../images/Rabbit  3D Illustration 1.png"
-        alt="Rabbit"
-        width="300px"
-        height="300px"
-        left="350px"
-        bottom="-90px"
-      />
-      <Image
-        src="../../images/Bird  3D Illustration 2.png"
-        alt="Bird2"
-        width="300px"
-        height="300px"
-        left="570px"
-        bottom="-90px"
-      />
-
-      <Image
-        src="../../images/Fox  3D Illustration 1.png"
-        alt="Fox"
-        width="350px"
-        height="350px"
-        left="800px"
-        bottom="-90px"
-      />
-
-      <Image
-        src="../../images/Bear  3D Illustration 1.png"
-        alt="Bear"
-        rotate={-20}
-        width="450px"
-        height="450px"
-        left="1050px"
-        bottom="-105px"
-      />
-
-*/

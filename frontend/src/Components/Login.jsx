@@ -34,10 +34,10 @@ const Input = styled.input`
   margin: 10px 0;
   border: 1px solid #e5e1e1;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
-
   border-radius: 25px;
   font-family: "Acme", sans-serif;
   color: #bcbcbc;
+  z-index: 2;
 `;
 
 const Label = styled.label`
@@ -54,7 +54,7 @@ const ForgotPasswordLink = styled.a`
   margin-top: 5px;
   color: #596780;
   text-decoration: none;
-
+  z-index: 2;
   &:hover {
     text-decoration: underline;
   }
@@ -71,7 +71,8 @@ const Button = styled.button`
   border: none;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-
+  z-index: 2;
+  transition: background-color 0.3s ease;
   &:hover {
     background-color: #ffcf53;
   }
@@ -86,12 +87,18 @@ const StyledLink = styled(Link)`
 `;
 
 const Image = styled.img`
-  width: ${(props) => props.width || "100px"};
-  height: ${(props) => props.height || "100px"};
-  transform: rotate(${(props) => props.rotate || "0"}deg);
+  width: 100%;
   position: absolute;
-  bottom: ${(props) => props.bottom || "auto"};
-  left: ${(props) => props.left || "auto"};
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+`;
+
+const Logo = styled.img`
+  width: 220px;
+  position: absolute;
+  top: 50px;
+  left: 50px;
 `;
 
 const LoginForm = () => {
@@ -113,16 +120,21 @@ const LoginForm = () => {
     const response = await authService.isValidLogin(email, password);
 
     if (response.success) {
-      notify(`Successfully logged in with email: ${email}`);
+      notify(
+        `Successfully logged in with email: ${email}`,
+        "success",
+        "#ffeab4"
+      );
       navigate("/");
     } else {
-      notify(`Check your credentials: ${response.errorMessage}`);
+      notify(`Check your credentials: ${response.errorMessage}`, "error");
     }
   };
 
   return (
     <Container>
       <Form onSubmit={handleLogin}>
+        <Logo src="../../images/Logo.png" alt="Logo" />
         <Label htmlFor="email">Email</Label>
         <Input
           type="text"
@@ -141,63 +153,12 @@ const LoginForm = () => {
         />
         <ForgotPasswordLink href="#">Forgot your password?</ForgotPasswordLink>
         <Button type="submit">Log in</Button>
-        <p style={{ color: "#9AA1A9" }}>
+        <p style={{ color: "#9AA1A9", zIndex: 2 }}>
           Dont have an account? <StyledLink to="/signin">Sign up</StyledLink>
         </p>
       </Form>
 
-      <Image
-        src="../../images/Frog  3D Illustration 1.png"
-        alt="Frog"
-        rotate={20}
-        width="450px"
-        height="450px"
-        left="-100px"
-        bottom="-130px"
-      />
-      <Image
-        src="../../images/Bird  3D Illustration 1.png"
-        alt="Bird"
-        width="350px"
-        height="350px"
-        left="130px"
-        bottom="-100px"
-      />
-      <Image
-        src="../../images/Rabbit  3D Illustration 1.png"
-        alt="Rabbit"
-        width="300px"
-        height="300px"
-        left="350px"
-        bottom="-90px"
-      />
-      <Image
-        src="../../images/Bird  3D Illustration 2.png"
-        alt="Bird2"
-        width="300px"
-        height="300px"
-        left="570px"
-        bottom="-90px"
-      />
-
-      <Image
-        src="../../images/Fox  3D Illustration 1.png"
-        alt="Fox"
-        width="350px"
-        height="350px"
-        left="800px"
-        bottom="-90px"
-      />
-
-      <Image
-        src="../../images/Bear  3D Illustration 1.png"
-        alt="Bear"
-        rotate={-20}
-        width="450px"
-        height="450px"
-        left="1050px"
-        bottom="-105px"
-      />
+      <Image src="../../images/Animals.png" alt="Background" />
     </Container>
   );
 };

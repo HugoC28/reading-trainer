@@ -57,6 +57,10 @@ const RightBox = styled.div`
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #ffeab4;
+  }
 `;
 
 const Text = styled.p`
@@ -93,7 +97,7 @@ const Profile = () => {
     if (!user) return;
     const response = await storageService.getPatient(user.uid, id);
     if (!response.success) {
-      notify(response.errorMessage);
+      notify(response.errorMessage, "error");
       return;
     }
     changeSelectedPatient(response.patient);
