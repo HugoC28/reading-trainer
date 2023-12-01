@@ -6,7 +6,7 @@ import storageService from "../services/storageService";
 import { useSelector } from "react-redux";
 
 const ModalContainer = styled.div`
-  background-color: white;
+  background-color: #ffeab4;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -49,7 +49,7 @@ const Button = styled.button`
   border-radius: 25px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-
+  transition: background-color 0.3s ease;
   &:hover {
     background-color: #ffcf53;
   }
@@ -102,9 +102,9 @@ const NewPatientPopup = ({ openModal, setOpenModal, fetchPatients }) => {
     const response = await storageService.createPatient(user.uid, formData);
     if (response.success) {
       fetchPatients();
-      notify(response.message);
+      notify(response.message, "success", "#ffeab4");
     } else {
-      notify(response.errorMessage);
+      notify(response.errorMessage, "error", "#ffeab4");
     }
 
     handleClose();

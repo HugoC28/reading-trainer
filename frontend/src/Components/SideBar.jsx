@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBeer } from "react-icons/fa";
 import { BsBarChartLineFill } from "react-icons/bs";
 import { IoCalendarOutline } from "react-icons/io5";
 import { HiOutlineDocumentText } from "react-icons/hi";
@@ -12,13 +11,17 @@ import authService from "../services/authService";
 import useToast from "../hooks/useToast";
 
 const SidebarContainer = styled.div`
-  background-color: #ffffff;
+  background-color: #ffeab4;
   color: #596780;
   width: 200px;
 `;
 
 const TitleContainer = styled.div`
-  height: 100px;
+  height: 120px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const MenuContainer = styled.div`
@@ -39,20 +42,13 @@ const IconItem = styled.div`
   margin-right: 10px;
 `;
 
-const Title = styled.h1`
-  font-family: "Acme", sans-serif;
-  margin-left: 10px;
-  font-size: 1.5em;
-  font-weight: 400;
-`;
-
 const StyledLink = styled(NavLink)`
   color: inherit;
   text-decoration: none;
 
   &.active {
     color: white;
-    background-color: #596780;
+    background-color: #ff9e58;
     border-radius: 10px;
   }
 `;
@@ -81,6 +77,10 @@ const LogoutButton = styled.button`
   cursor: pointer;
 `;
 
+const Logo = styled.img`
+  width: 80%;
+`;
+
 const SideBar = () => {
   const navigate = useNavigate();
   const { notify } = useToast();
@@ -90,20 +90,20 @@ const SideBar = () => {
     const response = await authService.isValidLogout();
 
     if (response.success) {
-      notify(`Successfully logged out.`);
+      notify(`Successfully logged out.`, "success");
       navigate("/login");
     } else {
-      notify(`There is a problem with logout: ${response.errorMessage}`);
+      notify(
+        `There is a problem with logout: ${response.errorMessage}`,
+        "error"
+      );
     }
   };
 
   return (
     <SidebarContainer>
       <TitleContainer>
-        <IconItem>
-          <FaBeer></FaBeer>
-          <Title>Clear Words</Title>
-        </IconItem>
+        <Logo src="../../images/Logo.png" alt="Logo" />
       </TitleContainer>
 
       <MenuContainer>

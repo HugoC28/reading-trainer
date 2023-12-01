@@ -15,7 +15,7 @@ const BoxesContainer = styled.div`
   flex-direction: row;
   justify-content: space-evenly;
   align-items: flex-start;
-  background-color: #c3c3c3;
+  background-color: #fffaf3;
 `;
 
 const StyledLink = styled(Link)`
@@ -29,13 +29,12 @@ const Box = styled.div`
   background-color: white;
   border-radius: 10px;
   margin-top: 20px;
-  border: 2px solid #a5a5a5;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
   display: flex;
   flex-direction: column;
-
+  transition: background-color 0.3s ease;
   &:hover {
-    background-color: #596780;
+    background-color: #ffeab4;
   }
 `;
 
@@ -54,6 +53,11 @@ const AddIcon = styled(AddCircleOutlineIcon)`
   right: 20px;
   cursor: pointer;
   z-index: 1000;
+
+  &:hover {
+    color: #ff9e58;
+    transform: scale(1.1);
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -74,7 +78,7 @@ const PatientSelection = () => {
     if (!user) return;
     const response = await storageService.getPatients(user.uid);
     if (!response.success) {
-      notify(response.errorMessage);
+      notify(response.errorMessage, "error");
       return;
     }
     setLoggedUserPatients(response.patients);

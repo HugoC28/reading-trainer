@@ -58,19 +58,21 @@ const SelectionLabel = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #d9d9d9;
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? "#FF9E58" : "#d9d9d9"};
   padding: 10px;
   margin: 3px;
   width: 250px;
-
-  border: 2px solid
-    ${({ $isSelected }) => ($isSelected ? "black" : "transparent")};
-
   border-radius: 10px;
+  transition: background-color 0.3s ease;
   cursor: pointer;
   &:hover {
-    background-color: #596780;
+    background-color: #ffcf53;
   }
+`;
+
+const SelectionText = styled(Text)`
+  color: ${({ $isSelected }) => ($isSelected ? "white" : "black")};
 `;
 
 const SliderWrapper = styled.div`
@@ -89,12 +91,13 @@ const LinkContainer = styled.div`
   align-items: center;
   width: 200px;
   height: 50px;
-  background-color: #d9d9d9;
+  background-color: #ff9e58;
   border-radius: 25px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
   cursor: pointer;
+  transition: background-color 0.3s ease;
   &:hover {
-    background-color: #596780;
+    background-color: #ffcf53;
   }
 `;
 const LoadingContainer = styled.div`
@@ -102,6 +105,10 @@ const LoadingContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
+`;
+
+const ButtonText = styled(Text)`
+  color: white;
 `;
 
 const topics = ["Rabbits", "Bears", "Dinosaurs"];
@@ -131,7 +138,7 @@ const NewTest = () => {
       if (!user) return;
       const response = await storageService.getPatient(user.uid, id);
       if (!response.success) {
-        notify(response.errorMessage);
+        notify(response.errorMessage, "error");
         return;
       }
       changeSelectedPatient(response.patient);
@@ -151,7 +158,7 @@ const NewTest = () => {
     const { selectedTopic, selectedExerciseType } = exerciseConfig;
 
     if (!selectedTopic || !selectedExerciseType) {
-      notify("Please select topic and exercise type");
+      notify("Please select topic and exercise type", "info", "#ffeab4");
       return;
     }
 
@@ -164,7 +171,7 @@ const NewTest = () => {
 
       changeGeneratedExercise(response);
     } catch (error) {
-      notify(`An error occurred: ${error.message}`);
+      notify(`An error occurred: ${error.message}`, "error", "#ffeab4");
     }
   };
 
@@ -189,7 +196,11 @@ const NewTest = () => {
                 $isSelected={exerciseConfig.selectedExerciseType === type}
                 onClick={() => handleConfigChange("selectedExerciseType", type)}
               >
-                <Text>{type}</Text>
+                <SelectionText
+                  $isSelected={exerciseConfig.selectedExerciseType === type}
+                >
+                  {type}
+                </SelectionText>
               </SelectionLabel>
             ))}
             <SliderWrapper>
@@ -209,10 +220,10 @@ const NewTest = () => {
                 sx={{
                   // Style the imported component
                   "& .MuiSlider-thumb": {
-                    color: "#596780",
+                    color: "#d9d9d9",
                   },
                   "& .MuiSlider-track": {
-                    color: "#596780",
+                    color: "#d9d9d9",
                   },
                   "& .MuiSlider-rail": {
                     color: "#d9d9d9",
@@ -229,7 +240,11 @@ const NewTest = () => {
                 $isSelected={exerciseConfig.selectedTopic === topic}
                 onClick={() => handleConfigChange("selectedTopic", topic)}
               >
-                <Text>{topic} </Text>
+                <SelectionText
+                  $isSelected={exerciseConfig.selectedTopic === topic}
+                >
+                  {topic}
+                </SelectionText>
               </SelectionLabel>
             ))}
             <SliderWrapper>
@@ -249,10 +264,10 @@ const NewTest = () => {
                 sx={{
                   // Style the imported component
                   "& .MuiSlider-thumb": {
-                    color: "#596780",
+                    color: "#d9d9d9",
                   },
                   "& .MuiSlider-track": {
-                    color: "#596780",
+                    color: "#d9d9d9",
                   },
                   "& .MuiSlider-rail": {
                     color: "#d9d9d9",
@@ -264,7 +279,7 @@ const NewTest = () => {
         </Upper>
         <Lower>
           <LinkContainer onClick={handleGenerateExercise}>
-            <Text>generate</Text>
+            <ButtonText>generate</ButtonText>
           </LinkContainer>
         </Lower>
       </TaskBox>
