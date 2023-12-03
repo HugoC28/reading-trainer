@@ -74,7 +74,7 @@ def generateVocabularyText():
     )
     
     result = dalleClient.images.generate(
-      model= "dall-e-3", # the name of your DALL-E 3 deployment
+      #model= "dall-e-3", # the name of your DALL-E 3 deployment
       prompt= parsedText["Prompt"],
       n=1
     )
