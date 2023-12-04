@@ -84,6 +84,7 @@ const Logo = styled.img`
 const SideBar = () => {
   const navigate = useNavigate();
   const { notify } = useToast();
+  const user = localStorage.getItem("user");
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -153,7 +154,7 @@ const SideBar = () => {
         <SmallText>User</SmallText>
         <IconItem>
           <BiUserCircle></BiUserCircle>
-          <MediumText>Tester</MediumText>
+          <MediumText>{user || "Email missing"}</MediumText>
         </IconItem>
         <LogoutButton onClick={handleLogout}>
           <IconItem>
