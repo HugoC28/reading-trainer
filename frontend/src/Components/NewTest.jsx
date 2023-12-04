@@ -10,16 +10,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import useToast from "../hooks/useToast";
 import storageService from "../services/storageService";
 import CircularProgress from "@mui/material/CircularProgress";
+import { exerciseTypes, marks } from "../constants";
 
 const Container = styled.div`
   margin: 20px;
-`;
-
-const Title = styled.h1`
-  font-family: "Acme", sans-serif;
-  font-size: 1.5em;
-  font-weight: 400;
-  margin-top: 40px;
 `;
 
 const Text = styled.span`
@@ -27,6 +21,21 @@ const Text = styled.span`
   font-size: 1em;
   font-weight: 400;
   margin: 0;
+`;
+
+const SelectionText = styled(Text)`
+  color: ${({ $isSelected }) => ($isSelected ? "white" : "black")};
+`;
+
+const ButtonText = styled(Text)`
+  color: white;
+`;
+
+const Title = styled.h1`
+  font-family: "Acme", sans-serif;
+  font-size: 1.5em;
+  font-weight: 400;
+  margin-top: 40px;
 `;
 
 const TaskBox = styled.div`
@@ -54,6 +63,11 @@ const UpperBox = styled.div`
   align-items: flex-start;
 `;
 
+const UpperRightBox = styled(UpperBox)`
+  opacity: ${({ $isSelected }) => ($isSelected ? 1 : 0)};
+  transition: opacity 0.5s ease-in-out;
+`;
+
 const SelectionLabel = styled.div`
   display: flex;
   justify-content: center;
@@ -69,10 +83,6 @@ const SelectionLabel = styled.div`
   &:hover {
     background-color: #ffcf53;
   }
-`;
-
-const SelectionText = styled(Text)`
-  color: ${({ $isSelected }) => ($isSelected ? "white" : "black")};
 `;
 
 const SliderWrapper = styled.div`
@@ -100,6 +110,7 @@ const LinkContainer = styled.div`
     background-color: #ffcf53;
   }
 `;
+
 const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -107,16 +118,15 @@ const LoadingContainer = styled.div`
   height: 100vh;
 `;
 
-const ButtonText = styled(Text)`
-  color: white;
+const Input = styled.input`
+  width: 250px;
+  padding: 10px;
+  margin: 3px;
+  border: 1px solid #e5e1e1;
+  border-radius: 10px;
+  font-family: "Acme", sans-serif;
+  color: #bcbcbc;
 `;
-
-const topics = ["Rabbits", "Bears", "Dinosaurs"];
-const exerciseTypes = [
-  "Vocabulary Building",
-  "Reading comprehension strategies",
-  "Patterned text",
-];
 
 const NewTest = () => {
   const navigate = useNavigate();
@@ -126,8 +136,8 @@ const NewTest = () => {
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
   const [exerciseConfig, setExerciseConfig] = useState({
-    difficulty: 5,
-    exerciseNumber: 5,
+    difficulty: 1,
+    exerciseNumber: 3,
     selectedTopic: null,
     selectedExerciseType: null,
   });
@@ -158,7 +168,7 @@ const NewTest = () => {
     const { selectedTopic, selectedExerciseType } = exerciseConfig;
 
     if (!selectedTopic || !selectedExerciseType) {
-      notify("Please select topic and exercise type", "info", "#ffeab4");
+      notify("Please fill all the info for the exercise", "info", "#ffeab4");
       return;
     }
 
@@ -182,6 +192,8 @@ const NewTest = () => {
       </LoadingContainer>
     );
   }
+
+  console.log(exerciseConfig);
 
   return (
     <Container>
@@ -212,10 +224,10 @@ const NewTest = () => {
                 onChange={(_, newValue) =>
                   handleConfigChange("exerciseNumber", newValue)
                 }
-                valueLabelDisplay="auto"
+                valueLabelDisplay="on"
                 aria-labelledby="exercise-number-slider"
                 min={1}
-                max={10}
+                max={5}
                 valueLabelFormat={(value) => `${value}`}
                 sx={{
                   // Style the imported component
@@ -228,25 +240,34 @@ const NewTest = () => {
                   "& .MuiSlider-rail": {
                     color: "#d9d9d9",
                   },
+                  "& .MuiSlider-valueLabel": {
+                    color: "black",
+                    backgroundColor: "unset",
+                    top: "24px",
+                  },
                 }}
               />
             </SliderWrapper>
           </UpperBox>
-          <UpperBox>
-            <Title>Topic</Title>
-            {topics.map((topic, index) => (
-              <SelectionLabel
-                key={index}
-                $isSelected={exerciseConfig.selectedTopic === topic}
-                onClick={() => handleConfigChange("selectedTopic", topic)}
-              >
-                <SelectionText
-                  $isSelected={exerciseConfig.selectedTopic === topic}
-                >
-                  {topic}
-                </SelectionText>
-              </SelectionLabel>
-            ))}
+          <UpperRightBox $isSelected={exerciseConfig.selectedExerciseType}>
+            <Title>
+              {exerciseConfig.selectedExerciseType != "Vocabulary Building"
+                ? "Topic"
+                : "Difficult words"}
+            </Title>
+            <Input
+              type="text"
+              placeholder={
+                exerciseConfig.selectedExerciseType != "Vocabulary Building"
+                  ? "Enter topic the patient is interested in"
+                  : "Enter difficult words separated by commas"
+              }
+              value={exerciseConfig.selectedTopic}
+              onChange={(e) =>
+                handleConfigChange("selectedTopic", e.target.value)
+              }
+            />
+
             <SliderWrapper>
               <Typography id="difficulty-slider" gutterBottom>
                 <Text>Difficulty:</Text>
@@ -256,11 +277,11 @@ const NewTest = () => {
                 onChange={(_, newValue) =>
                   handleConfigChange("difficulty", newValue)
                 }
-                valueLabelDisplay="auto"
+                valueLabelDisplay="off"
                 aria-labelledby="difficulty-slider"
-                min={1}
-                max={10}
-                valueLabelFormat={(value) => `${value}`}
+                marks={marks}
+                min={0}
+                max={3}
                 sx={{
                   // Style the imported component
                   "& .MuiSlider-thumb": {
@@ -272,10 +293,20 @@ const NewTest = () => {
                   "& .MuiSlider-rail": {
                     color: "#d9d9d9",
                   },
+                  "& .MuiSlider-mark": {
+                    backgroundColor: "#ff9e58",
+                    height: "10px",
+                  },
+                  "& .MuiSlider-markLabel": {
+                    color: "black",
+                    fontFamily: "'Acme', sans-serif",
+                    fontSize: "1em",
+                    fontWeight: 400,
+                  },
                 }}
               />
             </SliderWrapper>
-          </UpperBox>
+          </UpperRightBox>
         </Upper>
         <Lower>
           <LinkContainer onClick={handleGenerateExercise}>
