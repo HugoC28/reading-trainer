@@ -36,6 +36,23 @@ const Text = styled.p`
   font-weight: 400;
 `;
 
+const Button = styled.button`
+  width: 50%;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: #ff9e58;
+  color: white;
+  border-radius: 25px;
+  border: none;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 2;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #ffcf53;
+  }
+`;
+
 const Image = styled.img`
   width: 400px;
   height: 400px;
@@ -50,13 +67,12 @@ const ExercisePreview = () => {
 
   return (
     <Content>
-      <Title>{`Tests's preview`}</Title>
+      <Title>{`Exercise's preview`}</Title>
       <TaskBox>
         <Text>Generated Exercise:</Text>
-
         {generatedExercise ? (
           // Display content when generatedExercise is not null
-          <>
+          generatedExercise.hasOwnProperty("Story") ? (
             <Item>
               <Text>{generatedExercise["Title"]}</Text>
 
@@ -64,7 +80,29 @@ const ExercisePreview = () => {
 
               <Text>{generatedExercise["Story"]}</Text>
             </Item>
-          </>
+          ) : (
+            Object.entries(generatedExercise).map(
+              ([key, { story, url, question, answers }]) => (
+                <Item key={key}>
+                  <Image src={url} alt={`story img`} />
+
+                  <div style={{ flex: 2, marginLeft: '20px' }}>
+                    <div>
+                      <Text>{story}</Text>
+                      <Text>{question}</Text>
+                    </div>
+                    <div>
+                      {answers.map((answer, index) => (
+                        <Button key={index}>{answer}</Button>
+                      ))}
+                    </div>
+                  </div>
+
+                </Item>
+              )
+            )
+
+          )
         ) : (
           // Display loading icon when generatedExercise is null
           <CircularProgress />

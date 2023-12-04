@@ -3,19 +3,23 @@ import requests
 import re
 import json
 from controllers.vocabularyBuilding import generateVocabularyText
+from controllers.readingComprehension import generateComprehensionTest
 
 
 def generate_exercise(req):
 
   body = req.json
   #difficulty = body['difficulty']
-  #exercise_number = body['exerciseNumber']
+  exercise_number = body['exerciseNumber']
   selected_exercise_type = body['selectedExerciseType']
-  #selected_topic = body['selectedTopic']
-
+  selected_topic = body['selectedTopic']
 
   if selected_exercise_type == "Vocabulary Building":
     response = generateVocabularyText()
+    return response
+  
+  elif selected_exercise_type == "Reading comprehension strategies":
+    response = generateComprehensionTest(selected_topic, exercise_number)
     return response
 
   # At the end, return the prompts, sentences and image urls
