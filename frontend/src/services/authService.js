@@ -23,6 +23,7 @@ const authService = {
       const user = userCredential.user;
       const token = await user.getIdToken();
       localStorage.setItem("token", token);
+      localStorage.setItem("user", user.email);
       return { success: true };
     } catch (error) {
       return { success: false, errorMessage: error.message };
