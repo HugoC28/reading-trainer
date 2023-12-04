@@ -4,6 +4,7 @@ import re
 import json
 from controllers.vocabularyBuilding import generateVocabularyText
 from controllers.readingComprehension import generateComprehensionTest
+from controllers.patternedText import generatePatternedText
 
 
 def generate_exercise(req):
@@ -20,6 +21,9 @@ def generate_exercise(req):
   
   elif selected_exercise_type == "Reading comprehension strategies":
     response = generateComprehensionTest(selected_topic, exercise_number)
+    return response
+  elif selected_exercise_type == "Patterned text":
+    response = generatePatternedText(selected_topic,3)
     return response
 
   # At the end, return the prompts, sentences and image urls

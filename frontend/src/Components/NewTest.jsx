@@ -115,7 +115,7 @@ const topics = ["Rabbits", "Bears", "Dinosaurs"];
 const exerciseTypes = [
   "Vocabulary Building",
   "Reading comprehension strategies",
-  "Storytelling and Narrative Activities",
+  "Patterned text",
 ];
 
 const NewTest = () => {

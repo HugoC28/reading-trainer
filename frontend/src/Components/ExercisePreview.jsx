@@ -36,6 +36,12 @@ const Text = styled.p`
   font-weight: 400;
 `;
 
+const StyledPre = styled.pre`
+  font-family: "Acme", sans-serif;
+  font-size: 1.5em;
+  font-weight: 400;
+`;
+
 const Button = styled.button`
   width: 50%;
   padding: 10px;
@@ -80,28 +86,44 @@ const ExercisePreview = () => {
 
               <Text>{generatedExercise["Story"]}</Text>
             </Item>
-          ) : (
-            Object.entries(generatedExercise).map(
-              ([key, { story, url, question, answers }]) => (
+          ) : (generatedExercise.hasOwnProperty("Type") ? (
+            Object.entries(generatedExercise["Dictionary"]).map(
+              ([key, {story, url}]) => (
                 <Item key={key}>
                   <Image src={url} alt={`story img`} />
 
                   <div style={{ flex: 2, marginLeft: '20px' }}>
                     <div>
-                      <Text>{story}</Text>
-                      <Text>{question}</Text>
-                    </div>
-                    <div>
-                      {answers.map((answer, index) => (
-                        <Button key={index}>{answer}</Button>
-                      ))}
+                      <StyledPre>{story}</StyledPre>
                     </div>
                   </div>
 
                 </Item>
               )
             )
+          ) :
+            (
+              Object.entries(generatedExercise).map(
+                ([key, { story, url, question, answers }]) => (
+                  <Item key={key}>
+                    <Image src={url} alt={`story img`} />
 
+                    <div style={{ flex: 2, marginLeft: '20px' }}>
+                      <div>
+                        <Text>{story}</Text>
+                        <Text>{question}</Text>
+                      </div>
+                      <div>
+                        {answers.map((answer, index) => (
+                          <Button key={index}>{answer}</Button>
+                        ))}
+                      </div>
+                    </div>
+
+                  </Item>
+                )
+              )
+            )
           )
         ) : (
           // Display loading icon when generatedExercise is null
