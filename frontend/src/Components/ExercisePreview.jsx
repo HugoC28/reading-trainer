@@ -73,9 +73,13 @@ const ExercisePreview = () => {
 
   return (
     <Content>
-      <Title>{`Exercise's preview`}</Title>
+      <Title>{"Exercise's preview"}</Title>
       <TaskBox>
         <Text>Generated Exercise:</Text>
+        <Text style={{ color: "red" }}>
+          Please remember that this is a preview
+        </Text>
+
         {generatedExercise ? (
           // Display content when generatedExercise is not null
           generatedExercise.hasOwnProperty("Story") ? (
@@ -86,42 +90,38 @@ const ExercisePreview = () => {
 
               <Text>{generatedExercise["Story"]}</Text>
             </Item>
-          ) : (generatedExercise.hasOwnProperty("Type") ? (
+          ) : generatedExercise.hasOwnProperty("Type") ? (
             Object.entries(generatedExercise["Dictionary"]).map(
-              ([key, {story, url}]) => (
+              ([key, { story, url }]) => (
                 <Item key={key}>
                   <Image src={url} alt={`story img`} />
 
-                  <div style={{ flex: 2, marginLeft: '20px' }}>
+                  <div style={{ flex: 2, marginLeft: "20px" }}>
                     <div>
                       <StyledPre>{story}</StyledPre>
                     </div>
                   </div>
-
                 </Item>
               )
             )
-          ) :
-            (
-              Object.entries(generatedExercise).map(
-                ([key, { story, url, question, answers }]) => (
-                  <Item key={key}>
-                    <Image src={url} alt={`story img`} />
+          ) : (
+            Object.entries(generatedExercise).map(
+              ([key, { story, url, question, answers }]) => (
+                <Item key={key}>
+                  <Image src={url} alt={`story img`} />
 
-                    <div style={{ flex: 2, marginLeft: '20px' }}>
-                      <div>
-                        <Text>{story}</Text>
-                        <Text>{question}</Text>
-                      </div>
-                      <div>
-                        {answers.map((answer, index) => (
-                          <Button key={index}>{answer}</Button>
-                        ))}
-                      </div>
+                  <div style={{ flex: 2, marginLeft: "20px" }}>
+                    <div>
+                      <Text>{story}</Text>
+                      <Text>{question}</Text>
                     </div>
-
-                  </Item>
-                )
+                    <div>
+                      {answers.map((answer, index) => (
+                        <Button key={index}>{answer}</Button>
+                      ))}
+                    </div>
+                  </div>
+                </Item>
               )
             )
           )
