@@ -146,7 +146,7 @@ const Profile = () => {
           <ul>
             {selectedPatient.exercises.map((e, index) => (
               <ListText key={index}>
-                {e.title} TODO: ADD LINK TO THE EXERCISE
+                {e.Title}, {e.Type} TODO: ADD LINK TO THE EXERCISE
               </ListText>
             ))}
           </ul>

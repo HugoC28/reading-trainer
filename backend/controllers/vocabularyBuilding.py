@@ -26,7 +26,6 @@ def parse_text_to_object(text):
 
   # Creating the object (dictionary)
   parsed_object = {
-    "Title": title,
     "Story": story,
     "Prompt": prompt
   }
@@ -34,7 +33,8 @@ def parse_text_to_object(text):
   # For an standar structure on excersices, they will be a dictionary of two fields,
   # "Type", wich is obvious and "Exercise", which is the original content
   exercise = {
-    "Type":"VocabularyBuilding",
+    "Type":"Vocabulary Building",
+    "Title": title,
     "Exercise":parsed_object
   }
 

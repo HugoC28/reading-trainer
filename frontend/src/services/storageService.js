@@ -141,6 +141,47 @@ const storageService = {
       return { success: false, errorMessage: error.message };
     }
   },
+
+  getExercises: async (userId,patientId) => {
+    try {
+      const loggedUserPatientExercisesRef = collection(db, `users/${userId}/patients/${patientId}/exercises`);
+
+      const data = await getDocs(loggedUserPatientExercisesRef);
+      const exercises = data.docs.map((doc) => {
+        const { createdAt, updatedAt, ...exerciseData } = doc.data();
+        return {
+          ...exerciseData,
+          id: doc.id,
+        };
+      });
+      return { success: true, exercises: exercises };
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
+
+  getExercise: async (userId, patientId, exerciseId) => {
+    try {
+      const exerciseRef = doc(db, `users/${userId}/patients/${patientId}/exercises/${exerciseId}`);
+
+      const exerciseResponse = await getDoc(exerciseRef);
+      if (exerciseResponse.exists()) {
+        // eslint-disable-next-line no-unused-vars
+        const { createdAt, updatedAt, ...exerciseData } = exerciseResponse.data();
+        return {
+          success: true,
+          exercise: {
+            ...exerciseData,
+            id: exerciseResponse.id,
+          },
+        };
+      } else {
+        return { success: false, errorMessage: "Patient not found" };
+      }
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
+  },
   deleteExercise: async () => {
     //Dunno is this needed? TODO
   },

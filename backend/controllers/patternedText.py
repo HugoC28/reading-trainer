@@ -12,6 +12,8 @@ def parse_text_to_object(text):
   print("========================================================\nCHATGPT RESPONSE:\n"+text)
  # Split the input string into parts using the "STORY:", "PROMPT:", "QUESTION:", and "ANSWERS:" markers
   parts = [part.strip() for part in text.split("STORY:")[1:]]
+  fpart = text.split("STORY:")[0]
+  title = fpart.split("TITLE:")[1]
 
   # Create a list of dictionaries
   result = {}
@@ -25,10 +27,11 @@ def parse_text_to_object(text):
 
     # Append the dictionary to the result list
     result[index] = result_dict
-    exercise = {
-      "Type": "PatternedText",
-      "Exercise": result
-    }
+  exercise = {
+    "Type": "Patterned Text",
+    "Title": title.strip(),
+    "Exercise": result
+  }
 
   return exercise
 
@@ -41,10 +44,11 @@ def generatePatternedText(selected_topic,nbr_parts):
   prompt = f'''Compose a patterned text for a 9-year-old child with reading difficulties, 
     centered around {selected_topic}. The sentences should be simple, with clear and consistent structure. 
     Ensure that the text is cohesive and forms an engaging narrative about {selected_topic}, including aspects of their appearance, 
-    behavior, and environment. This text must contain {nbr_parts} parts. For each part, give on DALL-E prompts that describes the related part. 
+    behavior, and environment. Start the text with TITLE: <title of the story>. This text must contain {nbr_parts} parts. For each part, give on DALL-E prompts that describes the related part. 
     Be consistent with the prompts and always describe the characters in the same way. You must follow this exact structure, with i from 1 to {nbr_parts}, 
-    don't add any other details such as specific separators, titles, transitions or advices :
+    don't add any other details such as specific separators, transitions or advices :
     \nSTORY: <story's part i>\nPROMPT: <DALL-E script for part i>. Here is an example of 3 parts about dinosaur:
+    TITLE: Dino friends
     STORY: Dino friends, big and small, 
     Roar and stomp, having a ball. 
     T-Rex with teeth so wide, 
@@ -61,6 +65,7 @@ def generatePatternedText(selected_topic,nbr_parts):
     Dino races, on the run!
     PROMPT: "Fast and sly velociraptors chasing tails in a dino race."
     '''
+  print("========================================\nCHATGPT PROMPT:\n"+prompt)
   messages.append({"role":"user","content":prompt})
   # Try to generate the exercise and prompts with gpt 4 in this try block.
   try:
