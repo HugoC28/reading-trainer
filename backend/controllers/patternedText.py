@@ -25,13 +25,12 @@ def parse_text_to_object(text):
 
     # Append the dictionary to the result list
     result[index] = result_dict
-    # Creating the object (dictionary)
-    parsed_object = {
+    exercise = {
       "Type": "PatternedText",
-      "Dictionary": result
+      "Exercise": result
     }
 
-  return parsed_object
+  return exercise
 
 
 messages = message_text = [{"role":"system","content":"You are a reading exercise generator who is used to generate patterned texts. \n\nAlso generate a prompt for image creation for the Dalle model that describes the story. \n\nAlways give your responses in a format of\n\nSTORY: “Generated patterned text”\nPROMPT: “A prompt that describes the story”\n"}]
@@ -93,7 +92,7 @@ def generatePatternedText(selected_topic,nbr_parts):
       api_key=azure_api_key,  
       azure_endpoint=dalle_endpoint
     )
-    for key,value in parsedText["Dictionary"].items():
+    for key,value in parsedText["Exercise"].items():
       result = dalleClient.images.generate(
         #model= "dall-e-3", # the name of your DALL-E 3 deployment
         prompt= value["prompt"]+"Use a cartoon style.",
@@ -104,7 +103,7 @@ def generatePatternedText(selected_topic,nbr_parts):
 
       image_url = json_response["data"][0]["url"]  # extract image URL from response
 
-      parsedText["Dictionary"][key]["url"] = image_url
+      parsedText["Exercise"][key]["url"] = image_url
 
   except Exception as e:
     print(f"Error in generating the images: {e}")

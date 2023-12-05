@@ -33,7 +33,15 @@ def parse_text_to_object(text):
     # Append the dictionary to the result list
     result[index] = result_dict
 
-  return result
+  # For an standar structure on excersices, they will be a dictionary of two fields,
+  # "Type", wich is obvious and "Exercise", which is the original content
+
+  exercise = {
+    "Type":"ReadingComprehension",
+    "Exercise":result
+  }
+
+  return exercise
 
 
 messages = message_text = [{"role":"system","content":"You are a reading exercise generator, adapted for a 9 years old child with language impairments."}]
@@ -76,7 +84,7 @@ def generateComprehensionTest(selected_topic, nbr_parts):
     )
 
     # Loop through the prompts and sentences and generate the images
-    for key, value in parsedText.items():
+    for key, value in parsedText["Exercise"].items():
       print(key, value)
 
       result = dalleClient.images.generate(
@@ -89,7 +97,7 @@ def generateComprehensionTest(selected_topic, nbr_parts):
 
       image_url = json_response["data"][0]["url"]  # extract image URL from response
 
-      parsedText[key]["url"] = image_url
+      parsedText["Exercise"][key]["url"] = image_url
 
   except Exception as e:
     print(f"Error in generating the images: {e}")

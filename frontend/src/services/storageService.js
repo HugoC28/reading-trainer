@@ -117,8 +117,29 @@ const storageService = {
     //TODO
   },
 
-  saveExercise: async () => {
-    //TODO
+  saveExercise: async (userId,patientId,exerciseData) => {
+    try {
+      const exerciseRef = collection(db, `users/${userId}/patients/${patientId}/exercises`);
+
+      // Process the data before saving it to the database
+      exerciseData = processExerciseData(exerciseData);
+
+      const timeStamp = serverTimestamp();
+
+      // Add the new exercise
+      await addDoc(exerciseRef, {
+        ...exerciseData,
+        createdAt: timeStamp,
+        updatedAt: timeStamp,
+      });
+
+      return {
+        success: true,
+        message: "Exercise created successfully",
+      };
+    } catch (error) {
+      return { success: false, errorMessage: error.message };
+    }
   },
   deleteExercise: async () => {
     //Dunno is this needed? TODO
@@ -137,6 +158,14 @@ function processData(data) {
       .map((difficulty) => difficulty.trim()),
     interests: data.interests.split(",").map((interest) => interest.trim()),
   };
+}
+
+function processExerciseData(data){
+  //The data, since it depends on the type of exercise, should be processed beforehand
+  //Added this in case we need to do some kind of preprocessing
+  return{
+    ...data
+  }
 }
 
 export default storageService;

@@ -82,16 +82,16 @@ const ExercisePreview = () => {
 
         {generatedExercise ? (
           // Display content when generatedExercise is not null
-          generatedExercise.hasOwnProperty("Story") ? (
+          (generatedExercise["Type"]=="VocabularyBuilding") ? (
             <Item>
-              <Text>{generatedExercise["Title"]}</Text>
+              <Text>{generatedExercise["Exercise"]["Title"]}</Text>
 
-              <Image src={generatedExercise["Url"]} alt={`story img`} />
+              <Image src={generatedExercise["Exercise"]["Url"]} alt={`story img`} />
 
-              <Text>{generatedExercise["Story"]}</Text>
+              <Text>{generatedExercise["Exercise"]["Story"]}</Text>
             </Item>
-          ) : generatedExercise.hasOwnProperty("Type") ? (
-            Object.entries(generatedExercise["Dictionary"]).map(
+          ) : (generatedExercise["Type"]=="PatternedText") ? (
+            Object.entries(generatedExercise["Exercise"]).map(
               ([key, { story, url }]) => (
                 <Item key={key}>
                   <Image src={url} alt={`story img`} />
@@ -105,7 +105,7 @@ const ExercisePreview = () => {
               )
             )
           ) : (
-            Object.entries(generatedExercise).map(
+            Object.entries(generatedExercise["Exercise"]).map(
               ([key, { story, url, question, answers }]) => (
                 <Item key={key}>
                   <Image src={url} alt={`story img`} />

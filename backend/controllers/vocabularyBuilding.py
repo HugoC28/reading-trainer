@@ -31,7 +31,14 @@ def parse_text_to_object(text):
     "Prompt": prompt
   }
 
-  return parsed_object
+  # For an standar structure on excersices, they will be a dictionary of two fields,
+  # "Type", wich is obvious and "Exercise", which is the original content
+  exercise = {
+    "Type":"VocabularyBuilding",
+    "Exercise":parsed_object
+  }
+
+  return exercise
 
 
 
@@ -75,7 +82,7 @@ def generateVocabularyText():
     
     result = dalleClient.images.generate(
       #model= "dall-e-3", # the name of your DALL-E 3 deployment
-      prompt= parsedText["Prompt"],
+      prompt= parsedText["Exercise"]["Prompt"],
       n=1
     )
 
@@ -83,11 +90,12 @@ def generateVocabularyText():
 
     image_url = json_response["data"][0]["url"]  # extract image URL from response
 
-    parsedText["Url"] = image_url
+    parsedText["Exercise"]["Url"] = image_url
 
   except Exception as e:
     print(f"Error in generating the images: {e}")
     return jsonify({"error": "Internal Server Error"}), 500
-
-  print(parsedText)
+  print("========================================\n")
+  print("Parsed Text:")
+  print(parsedText["Exercise"])
   return jsonify(parsedText), 200
