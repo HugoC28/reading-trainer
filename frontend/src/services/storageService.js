@@ -9,9 +9,16 @@ import {
   addDoc,
 } from "firebase/firestore";
 import firebaseApp from "../config/authconfig";
+import { 
+  getStorage,
+  ref,
+  uploadBytes,
+
+} from "firebase/storage";
 
 // Initialize Firebase Authentication and Firestore
 const db = getFirestore(firebaseApp);
+const storage = getStorage(firebaseApp);
 
 const storageService = {
   createTherapist: async (user, email, firstName, lastName) => {
@@ -117,21 +124,22 @@ const storageService = {
     //TODO
   },
 
-  saveExercise: async (userId,patientId,exerciseData) => {
+  saveExercise: async (userId,patientId,exerciseDataU) => {
     try {
       const exerciseRef = collection(db, `users/${userId}/patients/${patientId}/exercises`);
 
       // Process the data before saving it to the database
-      exerciseData = processExerciseData(exerciseData);
-
+      const [ exerciseData, images ] = processExerciseData(exerciseDataU);
       const timeStamp = serverTimestamp();
-
       // Add the new exercise
-      await addDoc(exerciseRef, {
+      const newExercise = await addDoc(exerciseRef, {
         ...exerciseData,
         createdAt: timeStamp,
         updatedAt: timeStamp,
       });
+
+      // Upload images to database
+      await uploadImagesFromExercise(userId,patientId,newExercise.id,images);
 
       return {
         success: true,
@@ -201,11 +209,86 @@ function processData(data) {
   };
 }
 
+async function uploadImagesFromExercise(userId,patientId,exerciseId,images){
+  const metadata = {contentType: "image/png",}
+  for (const key in images){
+    const imageRef = ref(storage,`users/${userId}/${patientId}/${exerciseId}/${key}.png`);
+    try{
+      const response = await fetch(images[key]);
+      const blob = await response.blob();
+      uploadBytes(imageRef, blob,metadata).then((snapshot) => {
+        console.log("Image uploaded");
+      });
+    }catch(error){
+      console.error("Error uploading image", error);
+    }
+  } 
+}
+
 function processExerciseData(data){
-  //The data, since it depends on the type of exercise, should be processed beforehand
-  //Added this in case we need to do some kind of preprocessing
-  return{
-    ...data
+  switch(data["Type"]) {
+    case "Vocabulary Building":
+      const imageUrl = {
+        "img1": data["Exercise"]["Url"]
+      }
+      const newExercise = {
+        story:data["Exercise"]["Story"],
+        image:"img1.png"        
+      }
+      const processedData1 = {
+        title: data["Title"],
+        type: data["Type"],
+        exersice: newExercise
+      }
+      return [
+        processedData1,
+        imageUrl
+      ]
+
+    case "Patterned Text":
+      const newExercise2 = {};
+      const imageUrl2 = {};
+      for (const index in data["Exercise"]){
+        imageUrl2["img"+index]=data["Exercise"][index]["url"]
+        newExercise2[index]={
+          story: data["Exercise"][index]["story"],
+          image: "img"+index+".png"
+        }
+      }
+      const processedData2 = {
+        title: data["Title"],
+        type: data["Type"],
+        exercise: newExercise2
+      }
+      return [
+        processedData2,
+        imageUrl2
+      ]
+    case "Reading Comprehension":
+      case "Patterned Text":
+      const newExercise3 = {};
+      const imageUrl3 = {};
+      for (const index in data["Exercise"]){
+        imageUrl3["img"+index]=data["Exercise"][index]["url"]
+        newExercise3[index]={
+          story: data["Exercise"][index]["story"],
+          image: "img"+index+".png",
+          question: data["Exercise"][index]["question"],
+          answers: data["Exercise"][index]["answers"]
+        }
+      }
+      const processedData3 = {
+        title: data["Title"],
+        type: data["Type"],
+        exercise: newExercise3
+      }
+      return [
+        processedData3,
+        imageUrl3
+      ]
+
+    default:
+      console.log("Exercise type not recognized in preprocessing for upload")
   }
 }
 
