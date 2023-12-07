@@ -73,7 +73,7 @@ const Button = styled.button`
   width: 50%;
   padding: 10px;
   margin-top: 5px;
-  background-color: #ff9e58;
+  background-color: ${({ isCorrect }) => (isCorrect ? 'green' : '#ff9e58')};
   color: white;
   border-radius: 25px;
   border: none;
@@ -152,7 +152,7 @@ const ExercisePreview = () => {
             )
           ) : (
             Object.entries(generatedExercise["Exercise"]).map(
-              ([key, { story, url, question, answers }]) => (
+              ([key, { story, url, question, answers, true_answer }]) => (
                 <Item key={key}>
                   <Image src={url} alt={`story img`} />
 
@@ -163,7 +163,11 @@ const ExercisePreview = () => {
                     </div>
                     <div>
                       {answers.map((answer, index) => (
-                        <Button key={index}>{answer}</Button>
+                        <Button
+                          key={index}
+                          isCorrect={answer === true_answer}
+                        >{answer}
+                        </Button>
                       ))}
                     </div>
                   </div>

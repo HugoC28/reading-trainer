@@ -10,7 +10,7 @@ from controllers.patternedText import generatePatternedText
 def generate_exercise(req):
 
   body = req.json
-  #difficulty = body['difficulty']
+  difficulty = body['difficulty']
   exercise_number = body['exerciseNumber']
   selected_exercise_type = body['selectedExerciseType']
   selected_topic = body['selectedTopic']
@@ -20,7 +20,7 @@ def generate_exercise(req):
     return response
   
   elif selected_exercise_type == "Reading comprehension strategies":
-    response = generateComprehensionTest(selected_topic, exercise_number)
+    response = generateComprehensionTest(selected_topic, exercise_number, difficulty)
     return response
   elif selected_exercise_type == "Patterned text":
     response = generatePatternedText(selected_topic,3)

@@ -136,7 +136,7 @@ const NewTest = () => {
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
   const [exerciseConfig, setExerciseConfig] = useState({
-    difficulty: 1,
+    difficulty: 2,
     exerciseNumber: 3,
     selectedTopic: null,
     selectedExerciseType: null,
@@ -280,8 +280,8 @@ const NewTest = () => {
                 valueLabelDisplay="off"
                 aria-labelledby="difficulty-slider"
                 marks={marks}
-                min={0}
-                max={3}
+                min={1}
+                max={4}
                 sx={{
                   // Style the imported component
                   "& .MuiSlider-thumb": {
