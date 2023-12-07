@@ -97,18 +97,22 @@ const Image = styled.img`
 
 const ExercisePreview = () => {
   const { generatedExercise } = useExercise();
-  const { id } = useParams();
+  const { patientId } = useParams();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
 
   const handleCreate = async () => {
-    const response = await storageService.saveExercise(user.uid,id,generatedExercise);
+    const response = await storageService.saveExercise(
+      user.uid,
+      patientId,
+      generatedExercise
+    );
     if (response.success) {
       notify(response.message, "success", "#ffeab4");
     } else {
       notify(response.errorMessage, "error", "#ffeab4");
     }
-  }
+  };
 
   return (
     <Content>
@@ -121,15 +125,18 @@ const ExercisePreview = () => {
 
         {generatedExercise ? (
           // Display content when generatedExercise is not null
-          (generatedExercise["Type"]=="Vocabulary Building") ? (
+          generatedExercise["Type"] == "Vocabulary Building" ? (
             <Item>
               <Text>{generatedExercise["Exercise"]["Title"]}</Text>
 
-              <Image src={generatedExercise["Exercise"]["Url"]} alt={`story img`} />
+              <Image
+                src={generatedExercise["Exercise"]["Url"]}
+                alt={`story img`}
+              />
 
-              <Text>{generatedExercise["Exercise"]["Story"]}</Text>              
+              <Text>{generatedExercise["Exercise"]["Story"]}</Text>
             </Item>
-          ) : (generatedExercise["Type"]=="Patterned Text") ? (
+          ) : generatedExercise["Type"] == "Patterned Text" ? (
             Object.entries(generatedExercise["Exercise"]).map(
               ([key, { story, url }]) => (
                 <Item key={key}>
@@ -171,14 +178,12 @@ const ExercisePreview = () => {
         {generatedExercise ? (
           //Display buttons only after everything is loaded
           <ButtonContainer>
-          <SaveButton onClick={handleCreate}>Save</SaveButton>
+            <SaveButton onClick={handleCreate}>Save</SaveButton>
           </ButtonContainer>
-        ) : ( undefined )}
+        ) : undefined}
       </TaskBox>
     </Content>
   );
 };
-
-
 
 export default ExercisePreview;

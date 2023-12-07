@@ -89,13 +89,13 @@ const LoadingContainer = styled.div`
 
 const Profile = () => {
   const { selectedPatient, changeSelectedPatient } = usePatient();
-  const { id } = useParams();
+  const { patientId } = useParams();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
 
   const fetchData = async () => {
     if (!user) return;
-    const response = await storageService.getPatient(user.uid, id);
+    const response = await storageService.getPatient(user.uid, patientId);
     if (!response.success) {
       notify(response.errorMessage, "error");
       return;
@@ -145,9 +145,14 @@ const Profile = () => {
         <LeftBox>
           <ul>
             {selectedPatient.exercises.map((e, index) => (
-              <ListText key={index}>
-                {e.Title}, {e.Type} TODO: ADD LINK TO THE EXERCISE
-              </ListText>
+              <StyledLink
+                to={`/patients/${selectedPatient.id}/exercises/${e.id}`}
+                key={e.id}
+              >
+                <ListText key={index}>
+                  {e.title}, {e.type}
+                </ListText>
+              </StyledLink>
             ))}
           </ul>
         </LeftBox>

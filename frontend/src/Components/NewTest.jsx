@@ -132,7 +132,7 @@ const NewTest = () => {
   const navigate = useNavigate();
   const { selectedPatient, changeSelectedPatient } = usePatient();
   const { changeGeneratedExercise } = useExercise();
-  const { id } = useParams();
+  const { patientId } = useParams();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
   const [exerciseConfig, setExerciseConfig] = useState({
@@ -146,7 +146,7 @@ const NewTest = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-      const response = await storageService.getPatient(user.uid, id);
+      const response = await storageService.getPatient(user.uid, patientId);
       if (!response.success) {
         notify(response.errorMessage, "error");
         return;
