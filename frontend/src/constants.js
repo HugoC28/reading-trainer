@@ -6,19 +6,19 @@ export const exerciseTypes = [
 
 export const marks = [
   {
-    value: 0,
+    value: 1,
     label: "Very Easy",
   },
   {
-    value: 1,
+    value: 2,
     label: "Easy",
   },
   {
-    value: 2,
+    value: 3,
     label: "Hard",
   },
   {
-    value: 3,
+    value: 4,
     label: "Very Hard",
   },
 ];

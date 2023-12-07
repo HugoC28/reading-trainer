@@ -23,14 +23,17 @@ def parse_text_to_object(text):
   for index, part in enumerate(parts):
     story, rest = part.split("PROMPT:")
     prompt, rest = rest.split("QUESTION:")
-    question, rest = rest.split("ANSWERS:")
+    question, rest = rest.split("TRUE_ANSWER:")
+    true_answer, rest = rest.split("POSSIBLE_ANSWERS:")
     answers = [ans.replace(">","").strip() for ans in rest.strip().split('\n') if ans.strip()]
+
 
     # Construct the dictionary
     result_dict = {
       'story': story.strip(),
       'prompt': prompt.strip(),
       'question': question.strip(),
+      'true_answer': true_answer.strip(),
       'answers': answers
     }
 
@@ -52,10 +55,10 @@ def parse_text_to_object(text):
 
 messages = message_text = [{"role":"system","content":"You are a reading exercise generator, adapted for a 9 years old child with language impairments."}]
 
-def generateComprehensionTest(selected_topic, nbr_parts):
+def generateComprehensionTest(selected_topic, nbr_parts, difficulty):
 
   # The difficult words can be maybe asked from the user in the UI?
-  prompt = f'''Compose a short and engaging story for a 9-year-old child with reading difficulties, centered around {selected_topic}. The sentences should be simple, with clear and consistent structure. Ensure that the text is cohesive and forms an engaging narrative about {selected_topic}, including aspects of their appearance, behavior, and environment. This story must contain {nbr_parts} parts. For each part, give on DALL-E prompts that describes the related part. Be consistent with the prompts and always describe the characters in the same way. Also add for each of those part one Multiple Choice Question related to the part, to test the child's text comprehension. Try not to ask questions that can be answered only with the generated image, to really test child's text comprehension.\nYou must follow this exact structure, with i from 1 to {nbr_parts}, don't add any other details such as specific separators, titles, transitions or advices :\nSTORY: <story's part i>\nPROMPT: <DALL-E script for part i>\nQUESTION: <MCQ question for part i>\nANSWERS: <4 possible answers for part i, separated by \n >\n Start the response with TITLE:<title of the story>'''
+  prompt = f'''Compose a short and engaging story for a 9-year-old child with reading difficulties, centered around {selected_topic}. The difficulty of this story should be approximately {difficulty}/4 for a 9-year-old child. The sentences should be simple, with clear and consistent structure. Ensure that the text is cohesive and forms an engaging narrative about {selected_topic}, including aspects of their appearance, behavior, and environment. This story must contain {nbr_parts} parts. For each part, give on DALL-E prompts that describes the related part. Be consistent with the prompts and always describe the characters in the same way. Also add for each of those part one Multiple Choice Question of difficulty {difficulty}/4 related to the part, to test the child's text comprehension. Try not to ask questions that can be answered only with the generated image, to really test child's text comprehension.\nYou must follow this exact structure, with i from 1 to {nbr_parts}, don't add any other details such as specific separators, part titles, transitions or advices :\nSTORY: <story's part i>\nPROMPT: <DALL-E script for part i>\nQUESTION: <MCQ question for part i>\nTRUE_ANSWER: <the true answer among the 4 possible answers>\nPOSSIBLE_ANSWERS: <4 possible answers for part i (containing TRUE_ANSWER at a random position), separated by \n >\n Start the response with TITLE:<title of the story>'''
 
   messages.append({"role":"user","content":prompt})
   # Try to generate the exercise and prompts with gpt 4 in this try block.
@@ -95,7 +98,7 @@ def generateComprehensionTest(selected_topic, nbr_parts):
 
       result = dalleClient.images.generate(
         #model= "dall-e-3", # the name of your DALL-E 3 deployment
-        prompt= value["prompt"],
+        prompt= value["prompt"]+"Use a cartoon style.",
         n=1
       )
 
