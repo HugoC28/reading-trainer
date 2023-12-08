@@ -274,7 +274,12 @@ function processExerciseData(data) {
         imageUrl3["img" + index] = data["Exercise"][index]["url"];
         newExercise3[index] = {
           story: data["Exercise"][index]["story"],
+<<<<<<< HEAD
           image: "img" + index + ".png",
+=======
+          url: data["Exercise"][index]["url"],
+          image: "img"+index+".png",
+>>>>>>> main
           question: data["Exercise"][index]["question"],
           answers: data["Exercise"][index]["answers"],
         };
