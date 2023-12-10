@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { usePatient } from "../hooks/usePatient";
-import { Link, useParams } from "react-router-dom";
+import { useExercise } from "../hooks/useExercise";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -69,15 +70,17 @@ const Text = styled.p`
   font-weight: 400;
 `;
 
+const StyledLink = styled(Link)`
+  color: inherit;
+  text-decoration: none;
+`;
 const ListText = styled.li`
   font-family: "Acme", sans-serif;
   font-size: 1em;
   font-weight: 400;
-`;
-
-const StyledLink = styled(Link)`
-  color: inherit;
-  text-decoration: none;
+  &:hover {
+    color: #656563;
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -89,6 +92,8 @@ const LoadingContainer = styled.div`
 
 const Profile = () => {
   const { selectedPatient, changeSelectedPatient } = usePatient();
+  const { changeGeneratedExercise } = useExercise();
+  const navigate = useNavigate();
   const { patientId } = useParams();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
@@ -119,6 +124,11 @@ const Profile = () => {
     );
   }
 
+  const goToExercise = (exerciseId) => {
+    changeGeneratedExercise(null);
+    navigate(`/patients/${selectedPatient.id}/exercises/${exerciseId}`);
+  };
+
   return (
     <Container>
       <Title>{`${selectedPatient.name}'s profile`}</Title>
@@ -145,14 +155,9 @@ const Profile = () => {
         <LeftBox>
           <ul>
             {selectedPatient.exercises.map((e, index) => (
-              <StyledLink
-                to={`/patients/${selectedPatient.id}/exercises/${e.id}`}
-                key={e.id}
-              >
-                <ListText key={index}>
-                  {e.title}, {e.type}
-                </ListText>
-              </StyledLink>
+              <ListText key={index} onClick={() => goToExercise(e.id)}>
+                {e.title}, {e.type}
+              </ListText>
             ))}
           </ul>
         </LeftBox>

@@ -6,6 +6,7 @@ import { useExercise } from "../hooks/useExercise";
 import storageService from "../services/storageService";
 import useToast from "../hooks/useToast";
 import { useEffect } from "react";
+import patientService from "../services/patientService";
 
 const Content = styled.div`
   margin: 20px;
@@ -39,6 +40,53 @@ const Text = styled.p`
   font-family: "Acme", sans-serif;
   font-size: 1.5em;
   font-weight: 400;
+  margin: 0;
+  margin-bottom: 20px;
+`;
+
+const AnswerText = styled(Text)`
+  margin-bottom: 10px;
+  margin-right: 10px;
+  &:hover {
+    color: ${({ isCorrect }) => (isCorrect ? "green" : "red")};
+  }
+`;
+
+const Image = styled.img`
+  width: 400px;
+  height: 400px;
+  margin: 20px;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+`;
+
+const TextQuestionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Answers = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+`;
+
+const StartButton = styled.button`
+  padding: 10px;
+  background-color: #ff9e58;
+  color: white;
+  border: none;
+  font-family: "Acme", sans-serif;
+  width: 100px;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #ffcf53;
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -54,27 +102,50 @@ const Exercise = () => {
   const { generatedExercise, changeGeneratedExercise } = useExercise();
   const { notify } = useToast();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await storageService.getExercise(
-        user.uid,
-        patientId,
-        exerciseId
-      );
-      if (!response.success) {
-        notify(response.errorMessage, "error");
-        return;
-      }
-      changeGeneratedExercise(response.exercise);
-    };
+  const fetchData = async () => {
+    const response = await storageService.getExercise(
+      user.uid,
+      patientId,
+      exerciseId
+    );
+    if (!response.success) {
+      notify(response.errorMessage, "error");
+      return;
+    }
 
+    if (response.exercise && response.exercise.exercise) {
+      for (const [key, value] of Object.entries(response.exercise.exercise)) {
+        const imageUrlResponse = await fetchImage(value.image);
+        const url = imageUrlResponse.url;
+        response.exercise.exercise[key].url = url;
+      }
+    }
+
+    changeGeneratedExercise(response.exercise);
+  };
+
+  const fetchImage = async (image) => {
+    const response = await storageService.getImageFromStorage(
+      user.uid,
+      patientId,
+      exerciseId,
+      image
+    );
+    if (!response.success) {
+      notify(response.errorMessage, "error");
+      return null;
+    }
+    return response;
+  };
+
+  useEffect(() => {
     if (user) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  if (!user) {
+  if (!user || !generatedExercise) {
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />
@@ -82,20 +153,47 @@ const Exercise = () => {
     );
   }
 
-  console.log(generatedExercise);
+  const onStartClick = () => {
+    patientService.startExercise(generatedExercise.exercise[1]);
+  };
 
   return (
     <Content>
       <Title>{"Exercise"}</Title>
       <TaskBox>
-        <Item>
-          <Text>{"Title: "}</Text>
-          <Text>{generatedExercise.title}</Text>
-        </Item>
-        <Item>
-          <Text>{"Type: "}</Text>
-          <Text>{generatedExercise.type}</Text>
-        </Item>
+        <Text>
+          {"Title: "} {generatedExercise.title}
+        </Text>
+        <Text>
+          {"Type: "}
+          {generatedExercise.type}
+        </Text>
+
+        {Object.entries(generatedExercise.exercise).map(([key, value]) => (
+          <Item key={key}>
+            <Image src={value.url} alt={`story img`} />
+            <TextQuestionsContainer>
+              <Text>{value.story}</Text>
+              {generatedExercise.type === "Reading Comprehension" && ( // We only render this block with exact exercise type
+                <>
+                  <Text>Question: {value.question}</Text>
+                  <Answers>
+                    {value.answers.map((answer, index) => (
+                      <AnswerText
+                        key={index}
+                        isCorrect={answer === value.true_answer}
+                      >
+                        {index + 1 + "."}
+                        {answer}
+                      </AnswerText>
+                    ))}
+                  </Answers>
+                </>
+              )}
+            </TextQuestionsContainer>
+          </Item>
+        ))}
+        <StartButton onClick={onStartClick}>Start Exercise</StartButton>
       </TaskBox>
     </Content>
   );

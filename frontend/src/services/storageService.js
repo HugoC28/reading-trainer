@@ -9,7 +9,8 @@ import {
   addDoc,
 } from "firebase/firestore";
 import firebaseApp from "../config/authconfig";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { processExerciseData, processPatientData } from "../helpers/process";
 
 // Initialize Firebase Authentication and Firestore
 const db = getFirestore(firebaseApp);
@@ -94,7 +95,7 @@ const storageService = {
       const patientsRef = collection(db, `users/${userId}/patients`);
 
       // Process the data before saving it to the database
-      patientData = processData(patientData);
+      patientData = processPatientData(patientData);
 
       const timeStamp = serverTimestamp();
 
@@ -115,10 +116,6 @@ const storageService = {
     }
   },
 
-  updatePatient: async () => {
-    //TODO
-  },
-
   saveExercise: async (userId, patientId, exerciseDataU) => {
     try {
       const exerciseRef = collection(
@@ -137,7 +134,12 @@ const storageService = {
       });
 
       // Upload images to database
-      await uploadImagesFromExercise(userId, patientId, newExercise.id, images);
+      await storageService.uploadImagesToStorage(
+        userId,
+        patientId,
+        newExercise.id,
+        images
+      );
 
       return {
         success: true,
@@ -157,6 +159,7 @@ const storageService = {
 
       const data = await getDocs(loggedUserPatientExercisesRef);
       const exercises = data.docs.map((doc) => {
+        // eslint-disable-next-line no-unused-vars
         const { createdAt, updatedAt, ...exerciseData } = doc.data();
         return {
           ...exerciseData,
@@ -195,105 +198,62 @@ const storageService = {
       return { success: false, errorMessage: error.message };
     }
   },
+  uploadImagesToStorage: async (userId, patientId, exerciseId, images) => {
+    const metadata = { contentType: "image/png" };
+    const uploadPromises = [];
+
+    for (const key in images) {
+      const imageRef = ref(
+        storage,
+        `users/${userId}/${patientId}/${exerciseId}/${key}.png`
+      );
+      try {
+        const response = await fetch(images[key]);
+        const blob = await response.blob();
+        const uploadPromise = uploadBytes(imageRef, blob, metadata);
+        uploadPromises.push(uploadPromise);
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+    }
+
+    try {
+      await Promise.all(uploadPromises);
+      console.log("All images uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading one or more images", error);
+    }
+  },
+
+  getImageFromStorage: async (userId, patientId, exerciseId, imageKey) => {
+    let url = null;
+    const imageRef = ref(
+      storage,
+      `users/${userId}/${patientId}/${exerciseId}/${imageKey}`
+    );
+    try {
+      url = await getDownloadURL(imageRef);
+      return {
+        success: true,
+        url: url,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        errorMessage: `Error retrieving image ${imageKey}`,
+      };
+    }
+  },
+
   deleteExercise: async () => {
     //Dunno is this needed? TODO
   },
   deletePatient: async () => {
     //Dunno is this needed? TODO
   },
+  updatePatient: async () => {
+    //TODO
+  },
 };
-
-function processData(data) {
-  return {
-    ...data,
-    age: parseInt(data.age, 10),
-    difficulties: data.difficulties
-      .split(",")
-      .map((difficulty) => difficulty.trim()),
-    interests: data.interests.split(",").map((interest) => interest.trim()),
-  };
-}
-
-async function uploadImagesFromExercise(userId, patientId, exerciseId, images) {
-  const metadata = { contentType: "image/png" };
-  for (const key in images) {
-    const imageRef = ref(
-      storage,
-      `users/${userId}/${patientId}/${exerciseId}/${key}.png`
-    );
-    try {
-      const response = await fetch(images[key]);
-      const blob = await response.blob();
-      uploadBytes(imageRef, blob, metadata).then((snapshot) => {
-        console.log("Image uploaded");
-      });
-    } catch (error) {
-      console.error("Error uploading image", error);
-    }
-  }
-}
-
-function processExerciseData(data) {
-  switch (data["Type"]) {
-    case "Vocabulary Building":
-      const imageUrl = {
-        img1: data["Exercise"]["Url"],
-      };
-      const newExercise = {
-        story: data["Exercise"]["Story"],
-        image: "img1.png",
-      };
-      const processedData1 = {
-        title: data["Title"],
-        type: data["Type"],
-        exersice: newExercise,
-      };
-      return [processedData1, imageUrl];
-
-    case "Patterned Text":
-      const newExercise2 = {};
-      const imageUrl2 = {};
-      for (const index in data["Exercise"]) {
-        imageUrl2["img" + index] = data["Exercise"][index]["url"];
-        newExercise2[index] = {
-          story: data["Exercise"][index]["story"],
-          image: "img" + index + ".png",
-        };
-      }
-      const processedData2 = {
-        title: data["Title"],
-        type: data["Type"],
-        exercise: newExercise2,
-      };
-      return [processedData2, imageUrl2];
-    case "Reading Comprehension":
-    case "Patterned Text":
-      const newExercise3 = {};
-      const imageUrl3 = {};
-      for (const index in data["Exercise"]) {
-        imageUrl3["img" + index] = data["Exercise"][index]["url"];
-        newExercise3[index] = {
-          story: data["Exercise"][index]["story"],
-<<<<<<< HEAD
-          image: "img" + index + ".png",
-=======
-          url: data["Exercise"][index]["url"],
-          image: "img"+index+".png",
->>>>>>> main
-          question: data["Exercise"][index]["question"],
-          answers: data["Exercise"][index]["answers"],
-        };
-      }
-      const processedData3 = {
-        title: data["Title"],
-        type: data["Type"],
-        exercise: newExercise3,
-      };
-      return [processedData3, imageUrl3];
-
-    default:
-      console.log("Exercise type not recognized in preprocessing for upload");
-  }
-}
 
 export default storageService;

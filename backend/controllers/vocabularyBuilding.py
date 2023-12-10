@@ -3,51 +3,41 @@ from openai import AzureOpenAI
 import re
 import json
 from flask import jsonify
-from utils import text_endpoint, dalle_endpoint, azure_api_key
+from utils import text_endpoint, dalle_endpoint, azure_api_key, marks, words
 import requests
 
 load_dotenv()
 
-def parse_text_to_object(text):
-  # Splitting the text into parts
-  parts = text.split('Title:')
-  title_part = parts[1].split('Story:')
+def parse_story_prompt(text):
+  # Regular expressions to match the title, story parts, and prompts
+  title_pattern = r"Title: \"([^\"]+)\""
+  story_pattern = r"Story Part (\d+): \"([^\"]+)\""
+  prompt_pattern = r"Prompt for DALLE \(Part (\d+)\): \"([^\"]+)\""
 
-  # Extracting title
-  title = title_part[0].strip()
+  # Extract title
+  title_match = re.search(title_pattern, text)
+  title = title_match.group(1) if title_match else None
 
-  story_part = title_part[1].split('Prompt:')
+  # Extract story parts and prompts
+  stories = re.findall(story_pattern, text)
+  prompts = re.findall(prompt_pattern, text)
 
-  # Extracting story
-  story = story_part[0].strip()
+  # Convert stories and prompts into a dictionary
+  exercises = {}
+  for story_part, story_text in stories:
+    corresponding_prompt = next((prompt_text for part, prompt_text in prompts if part == story_part), None)
+    exercises[story_part] = {"story": story_text, "prompt": corresponding_prompt}
 
-  # Extracting prompt
-  prompt = story_part[1].strip()
+  # Construct the final data structure
+  data = { "Type":"Vocabulary Building", "Title": title, "Exercise": exercises}
+  return data
 
-  # Creating the object (dictionary)
-  parsed_object = {
-    "Story": story,
-    "Prompt": prompt
-  }
+messages = [{"role":"system","content":"You are a reading exercise generator who is used to generate Vocabulary texts: They are texts with a controlled vocabulary, made in order for the patient to learn and remember certain words that are difficult to them. "}]
 
-  # For an standar structure on excersices, they will be a dictionary of two fields,
-  # "Type", wich is obvious and "Exercise", which is the original content
-  exercise = {
-    "Type":"Vocabulary Building",
-    "Title": title,
-    "Exercise":parsed_object
-  }
+def generateVocabularyText(selected_topic, exercise_number, difficulty):
 
-  return exercise
+  prompt = f'''Generate a reading exercise and a image prompt on the difficult words {selected_topic}. The exercise should consist of {exercise_number} parts, each with a controlled vocabulary suited for the {marks[difficulty-1]} level. The text in each part should be approximately {words[difficulty-1]} words.\n\n For each part of the exercise, also provide a descriptive prompt for image generator to create an image that visually represents the story part.\n\n Format your response as follows:\n\n Title: "Title of the story"\nStory Part 1: "Generated story part 1"\n Prompt for DALLE (Part 1): "Image prompt describing story part 1"\n...\nStory Part {exercise_number}: "Generated story part {exercise_number}"\nPrompt for DALLE (Part {exercise_number}): "Image prompt describing story part {exercise_number}"'''
 
-
-
-messages = message_text = [{"role":"system","content":"You are a reading exercise generator who is used to generate Vocabulary texts: They are texts with a controlled vocabulary, made in order for the child to learn and remember certain words that are difficult to them. You are given the a list of difficult words and the length of the text. \n\nAlso generate a prompt for image creation for the Dalle model that describes the story. \n\nAlways give your responses in a format of\n\nTitle: “Title of the story”\nStory: “Generated story”\nPrompt: “A prompt that describes the story”\n"}]
-
-def generateVocabularyText():
-
-  # The difficult words can be maybe asked from the user in the UI?
-  prompt = "Generate a reading exercise about difficult words: Hippopotamus, Squirrel in a length of 100 words"
   messages.append({"role":"user","content":prompt})
   # Try to generate the exercise and prompts with gpt 4 in this try block.
   try:
@@ -63,7 +53,7 @@ def generateVocabularyText():
     )
 
     chatGPTReply = response.choices[0].message.content
-    parsedText = parse_text_to_object(chatGPTReply)
+    parsedText = parse_story_prompt(chatGPTReply)
   
   except requests.RequestException as e:
     print(f"Error in generating the exercise and prompts: {e}")
@@ -71,7 +61,6 @@ def generateVocabularyText():
 
 
   # Try to generate the images in this try block.
-  
   try:
     # Diffenrent models have different endpoints
     dalleClient = AzureOpenAI(
@@ -79,22 +68,27 @@ def generateVocabularyText():
       api_key=azure_api_key,  
       azure_endpoint=dalle_endpoint
     )
-    
-    result = dalleClient.images.generate(
-      #model= "dall-e-3", # the name of your DALL-E 3 deployment
-      prompt= parsedText["Exercise"]["Prompt"],
-      n=1
-    )
 
-    json_response = json.loads(result.model_dump_json())
+    # Loop through the prompts and sentences and generate the images
+    for key, value in parsedText["Exercise"].items():
+      
+      result = dalleClient.images.generate(
+        #model= "dall-e-3", # the name of your DALL-E 3 deployment
+        prompt= value["prompt"]+"Use a cartoon style.",
+        n=1
+      )
+      print(result)
 
-    image_url = json_response["data"][0]["url"]  # extract image URL from response
+      json_response = json.loads(result.model_dump_json())
 
-    parsedText["Exercise"]["Url"] = image_url
+      image_url = json_response["data"][0]["url"]  # extract image URL from response
+
+      parsedText["Exercise"][key]["url"] = image_url
 
   except Exception as e:
     print(f"Error in generating the images: {e}")
     return jsonify({"error": "Internal Server Error"}), 500
+    
   print("========================================\n")
   print("Parsed Text:")
   print(parsedText["Exercise"])

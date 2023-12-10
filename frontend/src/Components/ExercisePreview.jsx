@@ -38,19 +38,37 @@ const Text = styled.p`
   font-family: "Acme", sans-serif;
   font-size: 1.5em;
   font-weight: 400;
+  margin: 0;
+  margin-bottom: 20px;
 `;
 
-const StyledPre = styled.pre`
-  font-family: "Acme", sans-serif;
-  font-size: 1.5em;
-  font-weight: 400;
+const AnswerText = styled(Text)`
+  margin-bottom: 10px;
+  margin-right: 10px;
+  &:hover {
+    color: ${({ isCorrect }) => (isCorrect ? "green" : "red")};
+  }
 `;
 
-const ButtonContainer = styled.div`
+const Image = styled.img`
+  width: 400px;
+  height: 400px;
+  margin: 20px;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+`;
+
+const TextQuestionsContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+`;
+
+const Answers = styled.div`
+  display: flex;
   flex-direction: row;
-  margin-top: 20px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 `;
 
 const SaveButton = styled.button`
@@ -67,32 +85,6 @@ const SaveButton = styled.button`
   &:hover {
     background-color: #ffcf53;
   }
-`;
-
-const Button = styled.button`
-  width: 50%;
-  padding: 10px;
-  margin-top: 5px;
-  background-color: ${({ isCorrect }) => (isCorrect ? 'green' : '#ff9e58')};
-  color: white;
-  border-radius: 25px;
-  border: none;
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  z-index: 2;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #ffcf53;
-  }
-`;
-
-const Image = styled.img`
-  width: 400px;
-  height: 400px;
-  margin: 20px;
-  border-radius: 50%;
-  border: 1px solid #d9d9d9;
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
 `;
 
 const ExercisePreview = () => {
@@ -124,67 +116,61 @@ const ExercisePreview = () => {
         </Text>
 
         {generatedExercise ? (
-          // Display content when generatedExercise is not null
-          generatedExercise["Type"] == "Vocabulary Building" ? (
-            <Item>
-              <Text>{generatedExercise["Exercise"]["Title"]}</Text>
+          // Display content when generatedExercise is not null. In the backend lets always return the generated exercise in the same way that is:
+          /*
+          {
+            Title: "Story Title"
+            Type: "Selected story exercise type"
+            Exercise: {
+              1 : {
+                prompt: "Dalle Prompt for the first text part"
+                story: "First story"
+                url: "Dalle Url"
+                (The next three fields are optional because all exercise types dont have questions)
+                question: "question related to the story". 
+                answers: [Answers in a array]
+                true_answer: "One of the answers is true"
 
-              <Image
-                src={generatedExercise["Exercise"]["Url"]}
-                alt={`story img`}
-              />
+              }
+              2 : {
+                ...
+              }
+              ...
+            }
+          }
+          */
+          <>
+            {Object.entries(generatedExercise.Exercise).map(([key, value]) => (
+              <Item key={key}>
+                <Image src={value.url} alt={`story img`} />
+                <TextQuestionsContainer>
+                  <Text>{value.story}</Text>
+                  {generatedExercise.Type === "Reading Comprehension" && ( // We only render this block with exact exercise type
+                    <>
+                      <Text>Question: {value.question}</Text>
+                      <Answers>
+                        {value.answers.map((answer, index) => (
+                          <AnswerText
+                            key={index}
+                            isCorrect={answer === value.true_answer}
+                          >
+                            {index + 1 + "."}
+                            {answer}
+                          </AnswerText>
+                        ))}
+                      </Answers>
+                    </>
+                  )}
+                </TextQuestionsContainer>
+              </Item>
+            ))}
 
-              <Text>{generatedExercise["Exercise"]["Story"]}</Text>
-            </Item>
-          ) : generatedExercise["Type"] == "Patterned Text" ? (
-            Object.entries(generatedExercise["Exercise"]).map(
-              ([key, { story, url }]) => (
-                <Item key={key}>
-                  <Image src={url} alt={`story img`} />
-
-                  <div style={{ flex: 2, marginLeft: "20px" }}>
-                    <div>
-                      <StyledPre>{story}</StyledPre>
-                    </div>
-                  </div>
-                </Item>
-              )
-            )
-          ) : (
-            Object.entries(generatedExercise["Exercise"]).map(
-              ([key, { story, url, question, answers, true_answer }]) => (
-                <Item key={key}>
-                  <Image src={url} alt={`story img`} />
-
-                  <div style={{ flex: 2, marginLeft: "20px" }}>
-                    <div>
-                      <Text>{story}</Text>
-                      <Text>{question}</Text>
-                    </div>
-                    <div>
-                      {answers.map((answer, index) => (
-                        <Button
-                          key={index}
-                          isCorrect={answer === true_answer}
-                        >{answer}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </Item>
-              )
-            )
-          )
+            <SaveButton onClick={handleCreate}>Save</SaveButton>
+          </>
         ) : (
           // Display loading icon when generatedExercise is null
           <CircularProgress />
         )}
-        {generatedExercise ? (
-          //Display buttons only after everything is loaded
-          <ButtonContainer>
-            <SaveButton onClick={handleCreate}>Save</SaveButton>
-          </ButtonContainer>
-        ) : undefined}
       </TaskBox>
     </Content>
   );
