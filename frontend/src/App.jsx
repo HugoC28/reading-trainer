@@ -9,6 +9,7 @@ import Settings from "./Components/Settings";
 import Help from "./Components/Help";
 import Profile from "./Components/Profile";
 import NewTest from "./Components/NewTest";
+import Exercise from "./Components/Exercise";
 import ExercisePreview from "./Components/ExercisePreview";
 import SideBar from "./Components/SideBar";
 import styled from "styled-components";
@@ -52,13 +53,18 @@ function App() {
           <Route path="/signin" element={<SigninForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/patients" element={<PatientSelection />} />
-          <Route path="/patients/:id" element={<Profile />} />
-          <Route path="/patients/:id/add" element={<NewTest />} />
+          <Route path="/patients/:patientId" element={<Profile />} />
+          <Route path="/patients/:patientId/add" element={<NewTest />} />
           <Route
-            path="/patients/:id/add/preview"
+            path="/patients/:patientId/add/preview"
             element={<ExercisePreview />}
           />
           <Route path="/" element={<DashBoard />} />
+          <Route
+            path="/patients/:patientId/exercises/:exerciseId"
+            element={<Exercise />}
+          />
+
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<Settings />} />

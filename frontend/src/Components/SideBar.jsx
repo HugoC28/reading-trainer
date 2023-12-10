@@ -104,7 +104,7 @@ const SideBar = () => {
   return (
     <SidebarContainer>
       <TitleContainer>
-        <Logo src="../../images/Logo.png" alt="Logo" />
+        <Logo src="http://localhost:5173/images/Logo.png" alt="Logo" />
       </TitleContainer>
 
       <MenuContainer>

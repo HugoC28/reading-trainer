@@ -7,7 +7,6 @@ const openAIService = {
   dummy: async () => await axios.get(`${BASE_URL}/`), // Dummy function to test connection
   getExercise: async (conf) => {
     // Function to get exercise from backend
-    console.log("conf", conf);
     try {
       const response = await axios.post(`${BASE_URL}/generate-exercise`, conf);
       return response.data;

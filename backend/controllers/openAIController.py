@@ -16,7 +16,7 @@ def generate_exercise(req):
   selected_topic = body['selectedTopic']
 
   if selected_exercise_type == "Vocabulary Building":
-    response = generateVocabularyText()
+    response = generateVocabularyText(selected_topic, exercise_number, difficulty)
     return response
   
   elif selected_exercise_type == "Reading comprehension strategies":
