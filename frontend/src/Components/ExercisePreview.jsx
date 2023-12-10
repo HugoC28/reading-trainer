@@ -5,6 +5,7 @@ import storageService from "../services/storageService";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useToast from "../hooks/useToast";
+import { useNavigate } from "react-router-dom";
 
 const Content = styled.div`
   margin: 20px;
@@ -92,6 +93,7 @@ const ExercisePreview = () => {
   const { patientId } = useParams();
   const user = useSelector((state) => state.user.currentUser);
   const { notify } = useToast();
+  const navigate = useNavigate();
 
   const handleCreate = async () => {
     const response = await storageService.saveExercise(
@@ -101,8 +103,9 @@ const ExercisePreview = () => {
     );
     if (response.success) {
       notify(response.message, "success", "#ffeab4");
+      navigate(`/patients/${patientId}/exercises/${response.exerciseId}`);
     } else {
-      notify(response.errorMessage, "error", "#ffeab4");
+      notify(response.errorMessage + "Please try again", "error", "#ffeab4");
     }
   };
 

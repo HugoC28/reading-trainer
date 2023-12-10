@@ -68,10 +68,24 @@
       questionEl.className = 'question';
       questionEl.textContent = data.question;
 
-      // Text element for the question
       const answers = document.createElement('div');
       answers.className = 'answers';
-      answers.textContent = data.answers;
+
+
+
+      if (Array.isArray(data.answers)) {
+        const answersList = document.createElement('ol');
+        answersList.className = 'answers-list';
+
+        data.answers.forEach((answer, index) => {
+          const answerEl = document.createElement('li');
+          answerEl.textContent = `${answer}`;
+          answersList.appendChild(answerEl);
+        });
+        answers.appendChild(answersList);
+      } else {
+        answers.textContent = data.answers;
+      }
 
       textEl.appendChild(storyEl)
       textEl.appendChild(questionEl)

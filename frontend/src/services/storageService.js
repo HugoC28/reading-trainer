@@ -143,6 +143,7 @@ const storageService = {
 
       return {
         success: true,
+        exerciseId: newExercise.id,
         message: "Exercise created successfully",
       };
     } catch (error) {
