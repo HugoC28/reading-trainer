@@ -79,7 +79,6 @@ const StartButton = styled.button`
   color: white;
   border: none;
   font-family: "Acme", sans-serif;
-  width: 100px;
   border-radius: 25px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
@@ -145,7 +144,7 @@ const Exercise = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  if (!user || !generatedExercise) {
+  if (!user || !generatedExercise || !generatedExercise.exercise) {
     return (
       <LoadingContainer>
         <CircularProgress size={100} style={{ color: "#596780" }} />
@@ -153,8 +152,8 @@ const Exercise = () => {
     );
   }
 
-  const onStartClick = () => {
-    patientService.startExercise(generatedExercise.exercise[1]);
+  const sendExercise = (key) => {
+    patientService.startExercise(generatedExercise.exercise[key]);
   };
 
   return (
@@ -170,30 +169,34 @@ const Exercise = () => {
         </Text>
 
         {Object.entries(generatedExercise.exercise).map(([key, value]) => (
-          <Item key={key}>
-            <Image src={value.url} alt={`story img`} />
-            <TextQuestionsContainer>
-              <Text>{value.story}</Text>
-              {generatedExercise.type === "Reading Comprehension" && ( // We only render this block with exact exercise type
-                <>
-                  <Text>Question: {value.question}</Text>
-                  <Answers>
-                    {value.answers.map((answer, index) => (
-                      <AnswerText
-                        key={index}
-                        isCorrect={answer === value.true_answer}
-                      >
-                        {index + 1 + "."}
-                        {answer}
-                      </AnswerText>
-                    ))}
-                  </Answers>
-                </>
-              )}
-            </TextQuestionsContainer>
-          </Item>
+          <>
+            <Item key={key}>
+              <Image src={value.url} alt={`story img`} />
+              <TextQuestionsContainer>
+                <Text>{value.story}</Text>
+                {generatedExercise.type === "Reading Comprehension" && ( // We only render this block with exact exercise type
+                  <>
+                    <Text>Question: {value.question}</Text>
+                    <Answers>
+                      {value.answers.map((answer, index) => (
+                        <AnswerText
+                          key={index}
+                          isCorrect={answer === value.true_answer}
+                        >
+                          {index + 1 + "."}
+                          {answer}
+                        </AnswerText>
+                      ))}
+                    </Answers>
+                  </>
+                )}
+              </TextQuestionsContainer>
+            </Item>
+            <StartButton onClick={() => sendExercise(key)}>
+              Send this Exercise
+            </StartButton>
+          </>
         ))}
-        <StartButton onClick={onStartClick}>Start Exercise</StartButton>
       </TaskBox>
     </Content>
   );
