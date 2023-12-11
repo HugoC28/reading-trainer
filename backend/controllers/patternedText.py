@@ -3,7 +3,7 @@ from openai import AzureOpenAI
 import re
 import json
 from flask import jsonify
-from utils import text_endpoint, dalle_endpoint, azure_api_key
+from utils import text_endpoint, dalle_endpoint, azure_api_key, marks, words 
 import requests
 
 load_dotenv()
@@ -38,13 +38,13 @@ def parse_text_to_object(text):
 
 messages = message_text = [{"role":"system","content":"You are a reading exercise generator who is used to generate patterned texts. \n\nAlso generate a prompt for image creation for the Dalle model that describes the story. \n\nAlways give your responses in a format of\n\nSTORY: “Generated patterned text”\nPROMPT: “A prompt that describes the story”\n"}]
 
-def generatePatternedText(selected_topic,nbr_parts):
+def generatePatternedText(selected_topic, nbr_parts, difficulty):
 
   # The difficult words can be maybe asked from the user in the UI?
-  prompt = f'''Compose a patterned text for a 9-year-old child with reading difficulties, 
-    centered around {selected_topic}. The sentences should be simple, with clear and consistent structure. 
+  prompt = f'''Compose a patterned text for a 9-year-old child with reading difficulties, centered around {selected_topic}.
+    The sentences should be simple, with clear and consistent structure. The text should be an {marks[difficulty-1]} level for a 9-year-old child.
     Ensure that the text is cohesive and forms an engaging narrative about {selected_topic}, including aspects of their appearance, 
-    behavior, and environment. Start the text with TITLE: <title of the story>. This text must contain {nbr_parts} parts. For each part, give on DALL-E prompts that describes the related part. 
+    behavior, and environment. Start the text with TITLE: <title of the story>. This text must contain {nbr_parts} parts, each part should be approximately {words[difficulty-1]} words. For each part, give on DALL-E prompts that describes the related part. 
     Be consistent with the prompts and always describe the characters in the same way. You must follow this exact structure, with i from 1 to {nbr_parts}, 
     don't add any other details such as specific separators, transitions or advices :
     \nSTORY: <story's part i>\nPROMPT: <DALL-E script for part i>. Here is an example of 3 parts about dinosaur:

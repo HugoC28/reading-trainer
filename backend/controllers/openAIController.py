@@ -23,7 +23,7 @@ def generate_exercise(req):
     response = generateComprehensionTest(selected_topic, exercise_number, difficulty)
     return response
   elif selected_exercise_type == "Patterned text":
-    response = generatePatternedText(selected_topic,3)
+    response = generatePatternedText(selected_topic, exercise_number, difficulty)
     return response
 
   # At the end, return the prompts, sentences and image urls
