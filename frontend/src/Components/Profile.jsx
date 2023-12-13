@@ -16,42 +16,54 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-family: "Acme", sans-serif;
+  font-family: "Poppins";
   font-size: 1.5em;
-  font-weight: 400;
+  font-weight: 600;
   margin-top: 40px;
 `;
 
 const InfoBox = styled.div`
   background-color: white;
   border-radius: 10px;
-  padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
   width: 97%;
 `;
 
+const SubInfoBox = styled.div`
+  display:flex;
+  margin:40px;
+`
+
+const SubInfoBoxL = styled.div`
+  flex:1;
+`
+const SubInfoBoxR = styled.div`
+  flex:1;
+  background-color:#FFFFFF;
+`
+
 const LowerContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  display:flex;
+  width:97%;
 `;
 
+const LowerLeftContainer = styled.div`
+  flex:3;
+`
+
+const LowerRightContainer = styled.div`
+  flex:2;
+`
+
 const LeftBox = styled.div`
-  flex: 2;
-  flex-grow: 1;
-  min-height: 170px;
-  min-width: 600px;
+  flex:3;
   background-color: white;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
   margin-right: 40px;
 `;
-
 const RightBox = styled.div`
-  flex: 1;
-  min-height: 170px;
-  min-width: 400px;
-  display: flex;
   justify-content: center;
   align-items: center;
   background-color: white;
@@ -92,6 +104,96 @@ const LoadingContainer = styled.div`
   align-items: center;
   height: 100vh;
 `;
+
+const ExerciseList = styled.ul`
+  margin-top:5px;
+  list-style-type:none;
+  padding-left:0px;
+`
+const Text_type = styled.p`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 100;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  opacity: 0.5;
+`;
+
+const Exercise = styled.div`
+  cursor: pointer;
+  border: 1px solid #D2D2D2;
+  &:hover {
+    background-color: #ffeab4;
+  }
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding: 10px;
+  padding-left:25px;
+  padding-top:12px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(4, 3, 3, 0.1);
+  margin:10px;
+  border-radius: 29px;
+  
+`
+
+const ExerciseText = styled.li`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+`
+
+const Field = styled.div`
+  display:flex;
+  flex-direction:row;
+  margin-bottom:25px;
+  `
+const FieldName = styled.div`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 500;
+  border-right: solid;
+  border-color: #A79C8E;
+  width:80px;
+  height:17px;
+`;
+const FieldName2 = styled.div`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 500;
+  border-right: solid;
+  border-color: #A79C8E;
+  width:80px;
+`;
+const FieldText = styled.div`
+  font-family: "Acme", sans-serif;
+  font-size: 1em;
+  font-weight: 200;
+  margin-left: 30px;
+  opacity:0.7;
+`;
+
+const FieldList = styled.div`
+  display:flex;
+  flex-direction:column;
+`
+
+const ImageContainer = styled.div`
+  float:right;
+  border-radius:10px;
+  overflow:hidden;
+  margin:0px;
+`
+const Plus = styled.img`
+  max-width: 15%;
+  height: auto;
+  display: block;
+  opacity:50%;
+  margin:0 auto;
+  margin-top:20px;
+  margin-bottom:20px;
+`
 
 const Profile = () => {
   const { selectedPatient, changeSelectedPatient } = usePatient();
@@ -136,42 +238,77 @@ const Profile = () => {
     <Container>
       <Title>{`${selectedPatient.name}'s profile`}</Title>
       <InfoBox>
-        <Text>Name: {selectedPatient.name}</Text>
-        <Text>Age: {selectedPatient.age}</Text>
-        <Text>Parents: {selectedPatient.parents}</Text>
-        <Text>Progress: {selectedPatient.progress}%</Text>
-        <Text>Difficulties:</Text>
-        <ul>
-          {selectedPatient.difficulties.map((d, index) => (
-            <ListText key={index}>{d}</ListText>
-          ))}
-        </ul>
-        <Text>Interests:</Text>
-        <ul>
-          {selectedPatient.interests.map((i, index) => (
-            <ListText key={index}>{i}</ListText>
-          ))}
-        </ul>
+        <SubInfoBox>
+          <SubInfoBoxL>
+            <Field>
+              <FieldName>Name</FieldName>
+              <FieldText>{selectedPatient.name}</FieldText>
+            </Field>
+            <Field>
+              <FieldName>Age</FieldName>
+              <FieldText>{selectedPatient.age} years old</FieldText>
+            </Field>
+            <Field>
+              <FieldName>Parents</FieldName>
+              <FieldText>{selectedPatient.parents}</FieldText>
+            </Field>
+            <Field>
+              <FieldName>Progress</FieldName>
+              <FieldText>{selectedPatient.progress}%</FieldText>
+            </Field>
+            <Field>
+              <FieldName2>
+                Difficulties
+              </FieldName2>
+              <FieldList>
+                {selectedPatient.difficulties.map((d, index) => (
+                  <FieldText key={index}>{d}</FieldText>
+                ))}
+              </FieldList>
+            </Field>
+          
+            <Field>
+              <FieldName2>Interests</FieldName2>
+              <FieldList>
+                {selectedPatient.interests.map((i, index) => (
+                  <FieldText key={index}>{i}</FieldText>
+                ))}
+              </FieldList> 
+            </Field>
+          </SubInfoBoxL>
+
+          <SubInfoBoxR>
+            <ImageContainer>
+              <img src="../../images/profilePicture.png"></img>
+            </ImageContainer>            
+          </SubInfoBoxR>
+        </SubInfoBox>        
       </InfoBox>
-      <Title>{`Latest exercises`}</Title>
       <LowerContainer>
-        <LeftBox>
-          <ul>
-            {selectedPatient.exercises.map((e, index) => (
-              <ListTextLink key={index} onClick={() => goToExercise(e.id)}>
-                {e.title}, {e.type}
-              </ListTextLink>
-            ))}
-          </ul>
-        </LeftBox>
-        <StyledLink
-          to={`/patients/${selectedPatient.id}/add`}
-          key={selectedPatient.id}
-        >
-          <RightBox>
-            <Text>+ new exercise</Text>
-          </RightBox>
-        </StyledLink>
+        <LowerLeftContainer>
+          <Title>{`Latest exercises`}</Title>
+            <LeftBox>
+            <ExerciseList>
+              {selectedPatient.exercises.map((e, index) => (
+                <Exercise onClick={() => goToExercise(e.id)} key={index}>
+                  <ExerciseText>{e.title}</ExerciseText>
+                  <Text_type>{e.type}</Text_type>                
+                </Exercise>
+              ))}
+            </ExerciseList>
+          </LeftBox>
+        </LowerLeftContainer>
+        <LowerRightContainer>
+          <Title>{`Add new exercise`}</Title>
+          <StyledLink
+            to={`/patients/${selectedPatient.id}/add`}
+            key={selectedPatient.id}
+          >
+            <RightBox>
+              <Plus src="../../images/plus-icon.png"></Plus>
+            </RightBox>
+          </StyledLink>
+        </LowerRightContainer>
       </LowerContainer>
     </Container>
   );
