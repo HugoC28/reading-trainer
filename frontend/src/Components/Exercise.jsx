@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useExercise } from "../hooks/useExercise";
 import storageService from "../services/storageService";
 import useToast from "../hooks/useToast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import patientService from "../services/patientService";
 
 const Content = styled.div`
@@ -97,6 +97,13 @@ const StartButton = styled.button`
   }
 `;
 
+const ButtonsContainer = styled.div`
+  margin: 20px;
+  display: flex;
+  gap: 20px;
+`;
+
+
 const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -109,6 +116,7 @@ const Exercise = () => {
   const user = useSelector((state) => state.user.currentUser);
   const { generatedExercise, changeGeneratedExercise } = useExercise();
   const { notify } = useToast();
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(-1);
 
   const fetchData = async () => {
     const response = await storageService.getExercise(
@@ -162,8 +170,31 @@ const Exercise = () => {
   }
 
   const sendExercise = (key) => {
+    console.log('key :')
+    console.log(key)
     patientService.startExercise(generatedExercise.exercise[key]);
+    console.log("sent")
   };
+
+  const startExercise = () => {
+    console.log(currentExerciseIndex)
+    setCurrentExerciseIndex(0);
+    sendExercise(0);
+  }
+
+  const nextExercise = () => {
+    if(generatedExercise.exercise[currentExerciseIndex+1]){
+      sendExercise(currentExerciseIndex+1);
+      setCurrentExerciseIndex(currentExerciseIndex+1);
+    }
+  }
+
+  const previousExercise = () => {
+    if(generatedExercise.exercise[currentExerciseIndex-1]){
+      sendExercise(currentExerciseIndex-1);
+      setCurrentExerciseIndex(currentExerciseIndex-1);
+    }
+   }
 
   return (
     <Content>
@@ -176,6 +207,19 @@ const Exercise = () => {
           {"Type: "}
           {generatedExercise.type}
         </Text>
+        <StartButton onClick={() => startExercise()}>
+          {currentExerciseIndex===-1 ? "Start the exercise" : "Restart the execrise"}
+        </StartButton>
+        {currentExerciseIndex>-1 && 
+          <ButtonsContainer>
+            <StartButton onClick={() => previousExercise()}>
+              Send previous part
+            </StartButton>
+            <StartButton onClick={() => nextExercise()}>
+              Send next part
+            </StartButton>
+          </ButtonsContainer>
+        }
 
         {Object.entries(generatedExercise.exercise).map(([key, value]) => (
           <>
@@ -201,7 +245,7 @@ const Exercise = () => {
               </TextQuestionsContainer>
             </Item>
             <StartButton onClick={() => sendExercise(key)}>
-              Send this Exercise
+              Send this part
             </StartButton>
           </>
         ))}
