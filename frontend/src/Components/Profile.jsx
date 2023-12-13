@@ -78,8 +78,11 @@ const ListText = styled.li`
   font-family: "Acme", sans-serif;
   font-size: 1em;
   font-weight: 400;
+`;
+
+const ListTextLink = styled(ListText)`
   &:hover {
-    color: #656563;
+    color: #150aed;
   }
 `;
 
@@ -155,9 +158,9 @@ const Profile = () => {
         <LeftBox>
           <ul>
             {selectedPatient.exercises.map((e, index) => (
-              <ListText key={index} onClick={() => goToExercise(e.id)}>
+              <ListTextLink key={index} onClick={() => goToExercise(e.id)}>
                 {e.title}, {e.type}
-              </ListText>
+              </ListTextLink>
             ))}
           </ul>
         </LeftBox>
