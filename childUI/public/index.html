@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>ReadingTrainer - Child Screen</title>
   <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
   <style>
     body {
@@ -36,11 +36,45 @@
       box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
 
     }
+    button{
+      width: 48%;
+      padding: 10px;
+      margin: 0 1% 1% 0;
+      background-color: #ff9e58;
+      color: white;
+      border: none;
+      font-family: "Acme", sans-serif;
+      border-radius: 25px;
+      box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      &:hover {
+        background-color: #ffcf53;
+      }
+    }
     .text {
+      text-align: justify;
       font-family: 'Acme', sans-serif; 
       font-size: 1.5em;
       font-weight: 400;
       margin-left: 20px;
+    }
+    p{
+      text-align: center;
+    }
+    .correct {
+      background-color: green;
+      color: white;
+      &:hover {
+        background-color: rgba(61, 155, 30, 0.795);
+      }
+    }
+    .uncorrect {
+      background-color: red;
+      color: white;
+      &:hover {
+        background-color: rgb(222, 97, 59);
+      }
     }
   </style>
 </head>
@@ -71,24 +105,35 @@
       const answers = document.createElement('div');
       answers.className = 'answers';
 
+      const answerText = document.createElement('p');
+      answerText.className = 'answer-text';
+      answerText.textContent = 'Select one answer !'
 
+      const handleAnswerClick = (isCorrect, clickedButton) => {
+        answerText.textContent = isCorrect ? "Good Job !" : "No, try another one...";
+        answerText.style.color = isCorrect ? "green" : "red" ;
+        clickedButton.classList.add(isCorrect ? 'correct' : 'uncorrect');
+      };
 
       if (Array.isArray(data.answers)) {
-        const answersList = document.createElement('ol');
+        const answersList = document.createElement('div');
         answersList.className = 'answers-list';
-
         data.answers.forEach((answer, index) => {
-          const answerEl = document.createElement('li');
-          answerEl.textContent = `${answer}`;
-          answersList.appendChild(answerEl);
+          const button = document.createElement("button");
+          button.textContent = `${answer}`;
+          button.addEventListener("click", () => handleAnswerClick(answer === data.true_answer, button));
+          answersList.appendChild(button);
         });
         answers.appendChild(answersList);
+        answers.appendChild(answerText);
       } else {
         answers.textContent = data.answers;
       }
 
       textEl.appendChild(storyEl)
+      textEl.appendChild(document.createElement('br'))
       textEl.appendChild(questionEl)
+      textEl.appendChild(document.createElement('br'))
       textEl.appendChild(answers)
 
       const imgEl = document.createElement('img');
