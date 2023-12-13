@@ -10,4 +10,4 @@
 
 ## Project overview's poster
 
-<a href="https://github.com/HugoC28/reading-trainer/Project_Overview_Poster.pdf"><img src="https://github.com/HugoC28/reading-trainer/assets/103205458/7f29f722-6bd3-4cc5-b698-4f364f1f06da" height="842" width="595"><a/>
+<a href="Project_Overview_Poster.pdf"><img src="https://github.com/HugoC28/reading-trainer/assets/103205458/7f29f722-6bd3-4cc5-b698-4f364f1f06da" height="842" width="595"><a/>
