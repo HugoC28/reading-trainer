@@ -36,9 +36,11 @@ def parse_text_to_object(text):
   return exercise
 
 
-messages = message_text = [{"role":"system","content":"You are a reading exercise generator who is used to generate patterned texts. \n\nAlso generate a prompt for image creation for the Dalle model that describes the story. \n\nAlways give your responses in a format of\n\nSTORY: “Generated patterned text”\nPROMPT: “A prompt that describes the story”\n"}]
 
 def generatePatternedText(selected_topic, nbr_parts, difficulty):
+
+  messages = message_text = [{"role":"system","content":"You are a reading exercise generator who is used to generate patterned texts. \n\nAlso generate a prompt for image creation for the Dalle model that describes the story. \n\nAlways give your responses in a format of\n\nSTORY: “Generated patterned text”\nPROMPT: “A prompt that describes the story”\n"}]
+
 
   # The difficult words can be maybe asked from the user in the UI?
   prompt = f'''Compose a patterned text for a 9-year-old child with reading difficulties, centered around {selected_topic}.
