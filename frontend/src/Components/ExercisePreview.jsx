@@ -87,7 +87,8 @@ const SaveButton = styled.button`
   color: white;
   border: none;
   font-family: "Acme", sans-serif;
-  width: 100px;
+  font-size: 1.2em;
+  width: 200px;
   border-radius: 25px;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
   cursor: pointer;
@@ -95,6 +96,28 @@ const SaveButton = styled.button`
   &:hover {
     background-color: #ffcf53;
   }
+`;
+
+const BackButton = styled.button`
+  padding: 10px;
+  background-color: #b3b3b3;
+  color: white;
+  border: none;
+  font-family: "Acme", sans-serif;
+  font-size: 1.2em;
+  width: 200px;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #cfcfcf;
+  }
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 20px;
 `;
 
 const ExercisePreview = () => {
@@ -117,6 +140,10 @@ const ExercisePreview = () => {
       notify(response.errorMessage + "Please try again", "error", "#ffeab4");
     }
   };
+
+  const handleBack = async () => {
+    navigate(-1)
+  }
 
   return (
     <Content>
@@ -175,8 +202,10 @@ const ExercisePreview = () => {
                 </TextQuestionsContainer>
               </Item>
             ))}
-
-            <SaveButton onClick={handleCreate}>Save</SaveButton>
+            <ButtonsContainer>
+              <BackButton onClick={handleBack}>Back to generation</BackButton>
+              <SaveButton onClick={handleCreate}>Save the exercise</SaveButton>
+            </ButtonsContainer>
           </>
         ) : (
           // Display loading icon when generatedExercise is null
