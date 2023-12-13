@@ -97,12 +97,11 @@ const StartButton = styled.button`
   }
 `;
 
-const ButtonsContainer = styled.div`
+/*const ButtonsContainer = styled.div`
   margin: 20px;
   display: flex;
   gap: 20px;
-`;
-
+`;*/
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -116,7 +115,8 @@ const Exercise = () => {
   const user = useSelector((state) => state.user.currentUser);
   const { generatedExercise, changeGeneratedExercise } = useExercise();
   const { notify } = useToast();
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(-1);
+  //const [currentExerciseIndex, setCurrentExerciseIndex] = useState(-1);
+  const [exerciseOn, setExerciseOn] = useState(false);
 
   const fetchData = async () => {
     const response = await storageService.getExercise(
@@ -170,18 +170,27 @@ const Exercise = () => {
   }
 
   const sendExercise = (key) => {
-    console.log('key :')
-    console.log(key)
+    if (key === "start") {
+      patientService.startExercise({ start: true });
+    }
+    if (key === "end") {
+      patientService.startExercise({ end: true });
+    }
     patientService.startExercise(generatedExercise.exercise[key]);
-    console.log("sent")
   };
 
   const startExercise = () => {
-    console.log(currentExerciseIndex)
-    setCurrentExerciseIndex(0);
-    sendExercise(0);
-  }
+    setExerciseOn(!exerciseOn);
+    if (!exerciseOn) {
+      sendExercise("start");
+    } else {
+      sendExercise("end");
+    }
+    //setCurrentExerciseIndex(0);
+    //sendExercise(0);
+  };
 
+  /*
   const nextExercise = () => {
     if(generatedExercise.exercise[currentExerciseIndex+1]){
       sendExercise(currentExerciseIndex+1);
@@ -196,6 +205,19 @@ const Exercise = () => {
     }
    }
 
+           {currentExerciseIndex>-1 && 
+          <ButtonsContainer>
+            <StartButton onClick={() => previousExercise()}>
+              Send previous part
+            </StartButton>
+            <StartButton onClick={() => nextExercise()}>
+              Send next part
+            </StartButton>
+          </ButtonsContainer>
+        }
+
+  */
+
   return (
     <Content>
       <Title>{"Exercise"}</Title>
@@ -208,18 +230,8 @@ const Exercise = () => {
           {generatedExercise.type}
         </Text>
         <StartButton onClick={() => startExercise()}>
-          {currentExerciseIndex===-1 ? "Start the exercise" : "Restart the execrise"}
+          {exerciseOn ? "Finish the exercise" : "Start the exercise"}
         </StartButton>
-        {currentExerciseIndex>-1 && 
-          <ButtonsContainer>
-            <StartButton onClick={() => previousExercise()}>
-              Send previous part
-            </StartButton>
-            <StartButton onClick={() => nextExercise()}>
-              Send next part
-            </StartButton>
-          </ButtonsContainer>
-        }
 
         {Object.entries(generatedExercise.exercise).map(([key, value]) => (
           <>
@@ -234,7 +246,7 @@ const Exercise = () => {
                       {value.answers.map((answer, index) => (
                         <AnswerButton
                           key={index}
-                          isCorrect = {answer === value.true_answer}
+                          isCorrect={answer === value.true_answer}
                         >
                           {answer}
                         </AnswerButton>
@@ -244,9 +256,11 @@ const Exercise = () => {
                 )}
               </TextQuestionsContainer>
             </Item>
-            <StartButton onClick={() => sendExercise(key)}>
-              Send this part
-            </StartButton>
+            {exerciseOn && (
+              <StartButton onClick={() => sendExercise(key)}>
+                Send this part
+              </StartButton>
+            )}
           </>
         ))}
       </TaskBox>
