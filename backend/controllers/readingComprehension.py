@@ -53,9 +53,11 @@ def parse_text_to_object(text):
   return exercise
 
 
-messages = message_text = [{"role":"system","content":"You are a reading exercise generator, adapted for a 9 years old child with language impairments."}]
 
 def generateComprehensionTest(selected_topic, nbr_parts, difficulty):
+
+  messages  = [{"role":"system","content":"You are a reading exercise generator, adapted for a 9 years old child with language impairments."}]
+
 
   # The difficult words can be maybe asked from the user in the UI?
   prompt = f'''Compose a short and engaging story for a 9-year-old child with reading difficulties, centered around {selected_topic}. The story should be a {marks[difficulty-1]} level for a 9-year-old child. The sentences should be simple, with clear and consistent structure. Ensure that the text is cohesive and forms an engaging narrative about {selected_topic}, including aspects of their appearance, behavior, and environment. This story must contain {nbr_parts} parts, each part should be approximately {words[difficulty-1]} words. For each part, give on DALL-E prompts that describes the related part. Be consistent with the prompts and always describe the characters in the same way. Also add for each of those part one Multiple Choice Question of difficulty {marks[difficulty-1]} related to the part, to test the child's text comprehension. Try not to ask questions that can be answered only with the generated image, to really test child's text comprehension.\nYou must follow this exact structure, with i from 1 to {nbr_parts}, don't add any other details such as specific separators, part titles, transitions or advices :\nSTORY: <story's part i>\nPROMPT: <DALL-E script for part i>\nQUESTION: <MCQ question for part i>\nTRUE_ANSWER: <the true answer among the 4 possible answers>\nPOSSIBLE_ANSWERS: <4 possible answers for part i (containing TRUE_ANSWER at a random position, different for each question), separated by \n >\n Start the response with TITLE:<title of the story>'''

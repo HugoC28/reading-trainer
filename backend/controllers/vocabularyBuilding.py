@@ -32,9 +32,12 @@ def parse_story_prompt(text):
   data = { "Type":"Vocabulary Building", "Title": title, "Exercise": exercises}
   return data
 
-messages = [{"role":"system","content":"You are a reading exercise generator who is used to generate Vocabulary texts: They are texts with a controlled vocabulary, made in order for the patient to learn and remember certain words that are difficult to them. "}]
+#messages = [{"role":"system","content":"You are a reading exercise generator who is used to generate Vocabulary texts: They are texts with a controlled vocabulary, made in order for the patient to learn and remember certain words that are difficult to them. "}]
 
 def generateVocabularyText(selected_topic, exercise_number, difficulty):
+
+  messages = [{"role":"system","content":"You are a reading exercise generator who is used to generate Vocabulary texts: They are texts with a controlled vocabulary, made in order for the patient to learn and remember certain words that are difficult to them. "}]
+
 
   prompt = f'''Generate a reading exercise and a image prompt on the difficult words {selected_topic}. The exercise should consist of {exercise_number} parts, each with a controlled vocabulary suited for the {marks[difficulty-1]} level. Repeat the difficult words several time in the exercise. The text in each part should be approximately {words[difficulty-1]} words.\n\n For each part of the exercise, also provide a descriptive prompt for image generator to create an image that visually represents the story part.\n\n Format your response as follows:\n\n Title: "Title of the story"\nStory Part 1: "Generated story part 1"\n Prompt for DALLE (Part 1): "Image prompt describing story part 1"\n...\nStory Part {exercise_number}: "Generated story part {exercise_number}"\nPrompt for DALLE (Part {exercise_number}): "Image prompt describing story part {exercise_number}"'''
 
@@ -46,6 +49,8 @@ def generateVocabularyText(selected_topic, exercise_number, difficulty):
       api_key=azure_api_key,  
       azure_endpoint=text_endpoint
     )
+
+    print(messages)
 
     response = textClient.chat.completions.create(
       model="gpt-4", # model = "deployment_name".
