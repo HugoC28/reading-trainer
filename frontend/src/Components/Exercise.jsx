@@ -44,11 +44,20 @@ const Text = styled.p`
   margin-bottom: 20px;
 `;
 
-const AnswerText = styled(Text)`
-  margin-bottom: 10px;
-  margin-right: 10px;
+const AnswerButton = styled.button`
+  width: 48%;
+  padding: 10px;
+  margin: 0 1% 1% 0;
+  background-color: ${({ isCorrect }) => (isCorrect ? "green" : "#ff9e58")};
+  color: white;
+  border: none;
+  font-family: "Acme", sans-serif;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   &:hover {
-    color: ${({ isCorrect }) => (isCorrect ? "green" : "red")};
+    background-color: #ffcf53;
   }
 `;
 
@@ -179,13 +188,12 @@ const Exercise = () => {
                     <Text>Question: {value.question}</Text>
                     <Answers>
                       {value.answers.map((answer, index) => (
-                        <AnswerText
+                        <AnswerButton
                           key={index}
-                          isCorrect={answer === value.true_answer}
+                          isCorrect = {answer === value.true_answer}
                         >
-                          {index + 1 + "."}
                           {answer}
-                        </AnswerText>
+                        </AnswerButton>
                       ))}
                     </Answers>
                   </>
